@@ -14,8 +14,9 @@ from django.views.generic import TemplateView
 
 from bedrock.base.urlresolvers import split_path
 
-from .dotlang import get_lang_path, get_translations_native_names
+from .dotlang import get_translations_native_names
 from .gettext import translations_for_template
+from .utils import get_l10n_path
 
 
 def template_source_url(template):
@@ -31,7 +32,7 @@ def template_source_url(template):
     return '%s/tree/master/%s' % (settings.GITHUB_REPO, relative_path)
 
 
-def render(request, template, context=None, **kwargs):
+def render(request, template, context=None, ftl_files=None, **kwargs):
     """
     Same as django's render() shortcut, but with l10n template support.
     If used like this::
@@ -52,10 +53,13 @@ def render(request, template, context=None, **kwargs):
     if isinstance(template, list):
         template = template[0]
 
+    if ftl_files:
+        context['ftl_files'] = ftl_files
+
     # Every template gets its own .lang file, so figure out what it is
     # and pass it in the context
     context['template'] = template
-    context['langfile'] = get_lang_path(template)
+    context['langfile'] = get_l10n_path(template)
     context['template_source_url'] = template_source_url(template)
 
     # if `locales` is given use it as the full list of active translations
