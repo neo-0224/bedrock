@@ -1,0 +1,70 @@
+
+
+$font-path: '/media/fonts';
+$image-path: '/media/protocol/img';
+
+
+@import '../../../protocol/css/components/hero';
+@import '../../../protocol/css/components/picto-card';
+@import '../../../protocol/css/templates/card-layout';
+
+.add-on-download {
+    display: none;
+}
+.card-header {
+    text-align: center;
+}
+.dark-content {
+    background-color: $color-off-black;
+}
+.ios-button {
+    text-decoration: none;
+}
+.links {
+    text-align: center;
+    padding-bottom: $layout-xl;
+    a {
+        color: $color-white;
+        padding-right: $spacing-lg;
+    }
+}
+.lockwise-logo{
+    margin-bottom: $spacing-md;
+}
+.mobile-download-buttons {
+    padding-bottom: $spacing-md;
+}
+.picto-content {
+    color: $color-white;
+}
+.mzp-c-card-picto .mzp-c-card-picto-content.encryption::before {
+    background: url('/media/img/firefox/lockwise/arrows.svg') no-repeat;
+}
+.mzp-c-card-picto .mzp-c-card-picto-content.touch::before {
+    background: url('/media/img/firefox/lockwise/fingerprinters.svg') no-repeat;
+}
+.mzp-c-card-picto .mzp-c-card-picto-content.privacy::before {
+    background: url('/media/img/firefox/lockwise/mask.svg') no-repeat;
+}
+.mzp-c-hero-desc {
+    margin-bottom: $spacing-lg;
+}
+.mzp-c-hero-image {
+    padding-top: $spacing-lg;
+}
+
+
+@media #{$mq-sm} {
+    .mobile-download-buttons {
+    margin-bottom: $spacing-lg;
+    }
+    .mzp-c-hero-image img {
+        margin: 0 $layout-lg;
+    }
+}
+
+@media #{$mq-lg} {
+    .add-on-download {
+        display: block;
+    }
+}

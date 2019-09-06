@@ -1,0 +1,105 @@
+{% add_lang_files "firefox/products/lockwise" %}
+
+{% from "macros.html" import google_play_button with context %}
+{% from "macros-protocol.html" import hero, picto_card with context %}
+
+{% extends "firefox/base/base-protocol.html" %}
+
+{% block page_favicon %}{{ static('img/firefox/lockwise/favicon.ico') }}{% endblock %}
+
+{% block page_title %}{{_('Firefox Lockwise — password manager —  take your passwords everywhere')}}{% endblock %}
+
+{% block page_desc %}{{ _('Firefox Lockwise lets you securely access the passwords you’ve saved in Firefox from anywhere — even outside of the browser. Features 256-bit encryption and Face/Touch ID.') }}{% endblock %}
+
+{% block page_css %}
+  {{ css_bundle('lockwise') }}
+{% endblock %}
+
+{% block body_id %}firefox-lockwise{% endblock %}
+{% block body_class %}firefox-lockwise{% endblock %}
+
+{% block content %}
+  <main role="main">
+    <section class="mzp-c-hero mzp-has-image">
+      <div class="mzp-l-content">
+        <div class="mzp-c-hero-body">
+          <img src="{{ static('img/firefox/lockwise/lockwise-horizontal.svg') }}" class="lockwise-logo" />
+          <h1 class="mzp-c-hero-title">{{ _('Take your passwords everywhere') }}</h1>
+          <div class="mzp-c-hero-desc">
+            <p>{{ _('Securely access the passwords you’ve saved in Firefox from anywhere — even outside of the browser.') }}</p>
+          </div>
+          <div class="mobile-download-buttons">
+            <a href="{{ lockwise_adjust_url('ios', 'accounts-page') }}" data-link-type="download" data-download-os="iOS" class="ios-button"  data-cta-text="AppleAppStore" data-cta-type="Lockwise-AppStore" data-cta-position="Primary">
+              <img src="{{ l10n_img('firefox/ios/btn-app-store.svg') }}" alt="{{ _('Download on the App Store') }}" width="152" height="45">
+            </a>
+            {{ google_play_button(href=lockwise_adjust_url('android', 'accounts-page'), extra_data_attributes={'download-location': button_location, 'cta-type': 'Lockwise-AppStore', 'cta-text': 'GooglePlayStore', 'cta-position': 'Primary' } ) }}
+          </div>
+          <div class="mzp-c-hero-cta add-on-download for-firefox-69-and-below" >
+            <div class="mzp-c-button-download-container">
+              <p >{{ _('Try Lockwise now') }}</p>
+              <a href="https://github.com/mozilla-lockwise/lockwise-addon/releases/download/2.2.5-alpha/lockwise-signed.xpi" class="mzp-c-button mzp-t-product" data-cta-type="Lockwise-Install" data-cta-position="Primary">{{ _('Install for Firefox') }}</a>
+            </div>
+          </div>
+          <div class="mzp-c-hero-cta add-on-download for-firefox-70-and-above" >
+            <div class="mzp-c-button-download-container">
+              <p >{{ _('Try Lockwise now') }}</p>
+              <a class="mzp-c-button mzp-t-product" id="lockwise-button" data-cta-type="Lockwise-Open" data-cta-position="Primary">{{ _('Open in Firefox') }} </a>
+            </div>
+          </div>
+          <div class="mzp-c-hero-cta add-on-download for-non-firefox-users" >
+            <div class="mzp-c-button-download-container">
+              <p >{{ _('Only in the Firefox browser') }}</p>
+              <a href="{{ url('firefox.download.thanks') }}" class="mzp-c-button mzp-t-product" data-cta-type="Lockwise-DownloadFX" data-cta-position="Primary">{{ _('Get Firefox') }}</a>
+            </div>
+          </div>
+          <div class="mzp-c-hero-image">
+          {% if LANG.startswith('en-') %}
+            <img src="{{ static('img/firefox/lockwise/EN.svg') }}" alt="">
+          {% elif LANG == 'de' %}
+            <img src="{{ static('img/fmake irefox/lockwise/DE.svg') }}" alt="">
+          {% elif LANG == 'fr' %}
+            <img src="{{ static('img/firefox/lockwise/FR.svg') }}" alt="">
+          {% elif LANG == 'it' %}
+            <img src="{{ static('img/firefox/lockwise/IT.svg') }}" alt="">
+          {% elif LANG.startswith('es-') %}
+            <img src="{{ static('img/firefox/lockwise/ES.svg') }}" alt="">
+          {% else %}
+            <img src="{{ static('img/firefox/lockwise/EN.svg') }}" alt="">
+          {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="mzp-c-hero-image">
+        <img src="" alt="">
+      </div>
+    </section>
+    <section class="dark-content">
+      <section class="mzp-l-card-third mzp-l-content">
+        <section class="mzp-c-card-picto ">
+          <div class="mzp-c-card-picto-content encryption">
+            <p class="picto-content">{{ _('256-bit encryption protects you while syncing') }}</p>
+          </div>
+        </section>
+        <section class="mzp-c-card-picto">
+          <div class="mzp-c-card-picto-content touch">
+            <p class="picto-content">{{ _('Get to your passwords securely with Face or Touch ID') }}</p>
+          </div>
+        </section>
+        <section class="mzp-c-card-picto">
+          <div class="mzp-c-card-picto-content privacy">
+            <p class="picto-content"><span>{{ _('Your privacy comes first. ')}}</span><span>{{ _('We keep your data safe, never sold.') }}</span></p>
+          </div>
+        </section>
+      </section>
+      <section class="mzp-l-content">
+        <section class="links">
+          <a href='https://support.mozilla.org/products/firefox-lockwise?utm_source=www.mozilla.org-lockwise&amp;utm_campaign=Lockwise&amp;utm_medium=referral' >{{ _('Support') }}</a>
+          <a href='https://lockwise.firefox.com/privacy.html'>{{ _('Your Privacy') }}</a>
+          <a href='https://github.com/mozilla-lockwise'>{{ _('GitHub') }}</a>
+        </section>
+      </section>
+    </section>
+  </main>
+{% endblock %}
+
+{% block js %}{{ js_bundle('lockwise') }}{% endblock %}
