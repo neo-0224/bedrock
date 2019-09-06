@@ -33,7 +33,7 @@ FXA_CLIENTS = {
 }
 
 
-def page(name, tmpl, decorators=None, url_name=None, **kwargs):
+def page(name, tmpl, decorators=None, url_name=None, ftl_files=None, **kwargs):
     """
     Define a bedrock page.
 
@@ -81,7 +81,7 @@ def page(name, tmpl, decorators=None, url_name=None, **kwargs):
         if name_prefix in settings.SUPPORTED_NONLOCALES:
             return django_render(request, tmpl, kwargs)
 
-        return l10n_utils.render(request, tmpl, kwargs)
+        return l10n_utils.render(request, tmpl, kwargs, ftl_files=ftl_files)
 
     # This is for graphite so that we can differentiate pages
     _view.page_name = url_name

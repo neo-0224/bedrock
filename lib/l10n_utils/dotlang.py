@@ -90,18 +90,9 @@ def mail_error(path, message):
     mail.mail_managers(subject, message)
 
 
-def fix_case(locale):
-    """Convert lowercase locales to uppercase: en-us -> en-US"""
-    parts = locale.split('-')
-    if len(parts) == 1:
-        return locale
-    else:
-        return '%s-%s' % (parts[0], parts[1].upper())
-
-
 def translate(text, files):
     """Search a list of .lang files for a translation"""
-    lang = fix_case(translation.get_language())
+    lang = translation.get_language(True)
 
     # don't attempt to translate the default language.
     if lang == settings.LANGUAGE_CODE:
@@ -200,25 +191,6 @@ _ = gettext
 _lazy = gettext_lazy
 
 
-def get_lang_path(path):
-    """Generate the path to a lang file from a django path.
-    /apps/foo/templates/foo/bar.html -> foo/bar
-    /templates/foo.html -> foo
-    /foo/bar.html -> foo/bar"""
-
-    p = path.split('/')
-
-    try:
-        i = p.index('templates')
-        p = p[i + 1:]
-    except ValueError:
-        pass
-
-    path = '/'.join(p)
-    base, ext = os.path.splitext(path)
-    return base
-
-
 def lang_file_is_active(path, lang=None):
     """
     If the lang file for a locale exists and has the correct comment returns
@@ -240,7 +212,7 @@ def lang_file_tag_set(path, lang=None):
     if settings.DEV or lang == settings.LANGUAGE_CODE:
         return ALL_THE_THINGS
 
-    lang = lang or fix_case(translation.get_language())
+    lang = lang or translation.get_language(True)
     rel_path = os.path.join('locale', lang, '%s.lang' % path)
     cache_key = 'tag:%s' % rel_path
     tag_set = cache.get(cache_key)
@@ -286,7 +258,7 @@ def get_translations_for_langfile(langfile):
     """
     Return the list of available translations for the langfile.
 
-    :param langfile: the path to a lang file, retrieved with get_lang_path()
+    :param langfile: the path to a lang file, retrieved with get_l10n_path()
     :return: list, like ['en-US', 'fr']
     """
 
