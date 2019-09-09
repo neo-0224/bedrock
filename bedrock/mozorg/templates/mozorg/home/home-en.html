@@ -58,30 +58,27 @@
 
   {% call download_banner(
     logo_title=_('Firefox'),
-    title=_('Your life is your business. Not ours.'),
-    desc=_('Firefox fights for you.'),
+    title=_('Take back your privacy'),
+    desc=_('Get the browser that blocks 2,000+ types of ad trackers'),
     ) %}
     {{ download_firefox(dom_id='download-primary', download_location='primary cta') }}
   {% endcall %}
 
   {% call download_banner_sticky(
-    title=_('<strong>Firefox</strong> fights for you.'),
-    sub_title=_('Fast. Private. Fearless.'),
-    desc=_('Firefox fights for you.')
+    title=_('Reclaim your privacy'),
     ) %}
     {{ download_firefox(dom_id='download-sticky', download_location='sticky cta', button_color='mzp-t-small') }}
   {% endcall %}
 
   {{ fxa_banner(
     logo_title=_('Firefox'),
-    title=_('Live your life.<br> Own your life.'),
-    sub_title=_('Take your privacy and bookmarks everywhere with a Firefox Account.'),
-    link_cta=_('Learn More'),
+    title=_('Firefox is more than a browser'),
+    desc=_('Meet our family of privacy-first products'),
+    link_cta=_('Meet the Family'),
   )}}
 
   {{ fxa_banner_sticky(
-    title=_('Firefox'),
-    sub_title=_('Live your life. Own your life.'),
+    title=_('Get privacy beyond the browser'),
     link_cta=_('Learn More'),
   )}}
 

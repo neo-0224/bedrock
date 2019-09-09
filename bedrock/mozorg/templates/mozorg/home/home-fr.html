@@ -21,31 +21,28 @@ Le saviez-vous ? Mozilla, le concepteur de Firefox, se bat pour qu’Internet, u
 
   {% call download_banner(
     logo_title='Firefox',
-    title='Votre vie privée ne regarde que vous',
-    desc='Firefox se bat pour vous.',
+    title='Nous ne mettons pas le nez dans vos données.',
+    desc='Le respect de votre vie privée est notre priorité. Notre modèle financier ne dépendra jamais de la vente et de l’utilisation de vos données personnelles.',
     ) %}
     {{ download_firefox(dom_id='download-primary', download_location='primary cta') }}
   {% endcall %}
 
   {% call download_banner_sticky(
-    title='Firefox',
-    sub_title='Votre vie privée ne regarde que vous',
-    desc='Firefox se bat pour vous.'
+    title='Votre vie privée ne regarde que vous.'
     ) %}
     {{ download_firefox(dom_id='download-sticky', download_location='sticky cta', button_color='mzp-t-small') }}
   {% endcall %}
 
   {{ fxa_banner(
     logo_title='Firefox',
-    title='Votre vie,<br> vos données.'|safe,
-    sub_title='Emportez vos données personnelles et vos marque-pages partout avec vous avec un compte Firefox.',
+    title='Des technologies résolument à vos côtés.',
+    desc='Bien plus qu’un navigateur, Firefox c’est toute une gamme de produits qui respectent vraiment votre vie privée.',
     link_cta='En savoir plus',
   )}}
 
   {{ fxa_banner_sticky(
-    title='Firefox',
-    sub_title='Votre vie, vos données.',
-    link_cta='En savoir plus',
+    title='Des technologies qui vous respectent.',
+    link_cta='Découvrir nos produits',
   )}}
 
   <div class="mozilla-content">
@@ -64,7 +61,7 @@ Le saviez-vous ? Mozilla, le concepteur de Firefox, se bat pour qu’Internet, u
         desc=_('Mozilla s’engage pour un Internet plus sain et plus accessible. Pour vous et pour demain.'),
         link_cta=_('En savoir plus sur Mozilla'),
         link_url=url('mozorg.about.manifesto'),
-        image_url='home/2018/billboard-more-power.png',
+        image_url='billboard-more-power.png',
         include_highres_image=True
       )}}
 
@@ -79,7 +76,7 @@ Le saviez-vous ? Mozilla, le concepteur de Firefox, se bat pour qu’Internet, u
         desc=_('Réalité virtuelle, IoT et plus encore.'),
         link_cta=_('Découvrez le web du futur'),
         link_url=url('mozorg.technology'),
-        image_url='home/2018/billboard-open-minds.png',
+        image_url='billboard-open-minds.png',
         include_highres_image=True,
         reverse=True
       )}}
@@ -96,7 +93,7 @@ Le saviez-vous ? Mozilla, le concepteur de Firefox, se bat pour qu’Internet, u
 
       <aside class="mzp-c-newsletter">
         <div class="mzp-c-newsletter-image">
-          {{ high_res_img('home/2018/newsletter-graphic.png', {'alt': ''}) }}
+          {{ high_res_img('newsletter-graphic.png', {'alt': ''}) }}
         </div>
 
         <div class="newsletter-content">
