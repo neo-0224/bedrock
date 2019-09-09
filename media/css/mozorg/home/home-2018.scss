@@ -427,6 +427,10 @@ h4 {
     background-color: #2a0140;
 }
 
+.fxaccount-secondary-cta.mzp-t-product-firefox .mzp-c-call-out-content {
+    @include at2x('/media/img/logos/firefox/master-md.png', 64px, 64px);
+}
+
 @media #{$mq-md} {
     .c-secondary-cta {
         @include bidi(((text-align, left, right),));
