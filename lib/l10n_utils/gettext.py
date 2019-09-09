@@ -175,7 +175,7 @@ def parse_template(path):
                 # remove empties
                 lang_files = [lf for lf in lang_files if lf]
                 if lang_files:
-                    cache.set(cache_key, lang_files, settings.DOTLANG_CACHE)
+                    cache.set(cache_key, lang_files)
                     return lang_files
     return []
 
@@ -206,7 +206,7 @@ def template_tag_set(path, lang):
     tag_set = cache.get(cache_key)
     if tag_set is None:
         tag_set = _get_template_tag_set(lang, path)
-        cache.set(cache_key, tag_set, settings.DOTLANG_CACHE)
+        cache.set(cache_key, tag_set)
 
     return tag_set
 

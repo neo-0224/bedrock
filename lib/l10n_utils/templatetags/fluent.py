@@ -10,5 +10,5 @@ from lib.l10n_utils.fluent import translate
 
 @library.global_function
 @jinja2.contextfunction
-def fluent(ctx, string_id):
-    return translate(string_id, ctx['ftl_files'])
+def fluent(ctx, string_id, **args):
+    return translate(string_id, ctx['ftl_files'], args)
