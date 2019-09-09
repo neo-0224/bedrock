@@ -227,12 +227,15 @@ LANGUAGE_URL_MAP = lazy(lazy_lang_url_map, dict)()
 LANGUAGES = lazy(lazy_langs, dict)()
 
 FEED_CACHE = 3900
-DOTLANG_CACHE = 600
+DOTLANG_CACHE = config('L10N_CACHE_TIMEOUT', default='600', parser=int)
 
 DOTLANG_FILES = ['navigation', 'download_button', 'main']
 
 FLUENT_DEFAULT_FILES = ['navigation', 'download_button']
-FLUENT_LOCAL_PATH = ROOT_PATH / 'l10n'
+FLUENT_PATHS = [
+    ROOT_PATH / 'l10n_external',
+    ROOT_PATH / 'l10n',
+]
 
 # Paths that don't require a locale code in the URL.
 # matches the first url component (e.g. mozilla.org/gameon/)

@@ -1,33 +1,48 @@
 from django.conf import settings
+from django.core.cache import caches
 
-from fluent.runtime import FluentBundle, FluentResource
+from fluent.runtime import FluentLocalization, RootedFileResourceLoader
 
 from lib.l10n_utils import translation
 
 
-def fluent_path(filename, lang):
-    return settings.FLUENT_LOCAL_PATH.joinpath(lang, filename).with_suffix('.ftl')
+cache = caches['l10n']
 
 
-def translate(string_id, files):
+def _fluent_cache_key(*args):
+    key = ['fluent-bundle']
+    for arg in args:
+        if isinstance(arg, str):
+            key.append(arg)
+        elif isinstance(arg, dict):
+            key.extend([f'k-v' for k, v in arg.items()])
+        else:
+            key.extend(arg)
+
+    return '-'.join(key)
+
+
+def fluent_bundle(locales, files):
+    key = _fluent_cache_key(locales, files)
+    bundle = cache.get(key)
+    if bundle is None:
+        files = [f'{f}.ftl' for f in files]
+        # temporary until MultiRootLoader lands
+        path = f'{settings.FLUENT_PATHS[1]}/{{locale}}/'
+        loader = RootedFileResourceLoader(path)
+        bundle = FluentLocalization(locales, files, loader)
+        cache.set(key, bundle)
+
+    return bundle
+
+
+def translate(string_id, files, args):
     lang = translation.get_language(True)
-    bundles = {
-        lang: FluentBundle([lang]),
-        'en': FluentBundle(['en']),
-    }
-    for file in files:
-        for bundle_lang in [lang, 'en']:
-            filepath = fluent_path(file, bundle_lang)
-            try:
-                with filepath.open() as fh:
-                    resource = FluentResource(fh.read())
-                    bundles[bundle_lang].add_resource(resource)
-            except FileNotFoundError:
-                pass
+    key = _fluent_cache_key(lang, string_id, files, args)
+    value = cache.get(key)
+    if value is None:
+        bundle = fluent_bundle([lang, 'en'], files)
+        value = bundle.format_value(string_id, args)
+        cache.set(key, value)
 
-    try:
-        lang_str, errors = bundles[lang].format_pattern(bundles[lang].get_message(string_id).value)
-    except KeyError:
-        lang_str, errors = bundles['en'].format_pattern(bundles['en'].get_message(string_id).value)
-
-    return lang_str
+    return value

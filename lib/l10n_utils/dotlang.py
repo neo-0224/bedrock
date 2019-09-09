@@ -108,7 +108,7 @@ def translate(text, files):
         if trans is None:
             path = os.path.join(settings.ROOT, rel_path)
             trans = parse(path)
-            cache.set(key, trans, settings.DOTLANG_CACHE)
+            cache.set(key, trans)
 
         if tweaked_text in trans:
             original = FORMAT_IDENTIFIER_RE.findall(text)
@@ -233,7 +233,7 @@ def lang_file_tag_set(path, lang=None):
         except IOError:
             pass
 
-        cache.set(cache_key, tag_set, settings.DOTLANG_CACHE)
+        cache.set(cache_key, tag_set)
 
     return tag_set
 
@@ -270,12 +270,11 @@ def get_translations_for_langfile(langfile):
 
     translations = []
     for lang in settings.PROD_LANGUAGES:
-        if (lang in product_details.languages and
-                (lang == settings.LANGUAGE_CODE or
-                 lang_file_is_active(langfile, lang))):
+        if (lang in product_details.languages and (
+                lang == settings.LANGUAGE_CODE or lang_file_is_active(langfile, lang))):
             translations.append(lang)
 
-    cache.set(cache_key, translations, settings.DOTLANG_CACHE)
+    cache.set(cache_key, translations)
     return translations
 
 
