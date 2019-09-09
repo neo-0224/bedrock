@@ -1,5 +1,8 @@
+from hashlib import md5
+
 from django.conf import settings
 from django.core.cache import caches
+from django.utils.encoding import force_bytes
 
 from fluent.runtime import FluentLocalization, RootedFileResourceLoader
 
@@ -10,23 +13,24 @@ cache = caches['l10n']
 
 
 def _fluent_cache_key(*args):
-    key = ['fluent-bundle']
+    hash = md5(b'fluent-bundle')
     for arg in args:
         if isinstance(arg, str):
-            key.append(arg)
+            hash.update(force_bytes(arg))
         elif isinstance(arg, dict):
-            key.extend([f'k-v' for k, v in arg.items()])
+            hash.update(b':'.join([force_bytes(f'{k}={v}') for k, v in arg.items()]))
         else:
-            key.extend(arg)
+            hash.update(b':'.join([force_bytes(a) for a in arg]))
 
-    return '-'.join(key)
+    return hash.hexdigest()
 
 
 def fluent_bundle(locales, files):
     key = _fluent_cache_key(locales, files)
     bundle = cache.get(key)
     if bundle is None:
-        files = [f'{f}.ftl' for f in files]
+        # file IDs may not have file extension
+        files = [f'{f}.ftl' for f in files if not f.endswith('.ftl')]
         # temporary until MultiRootLoader lands
         path = f'{settings.FLUENT_PATHS[1]}/{{locale}}/'
         loader = RootedFileResourceLoader(path)

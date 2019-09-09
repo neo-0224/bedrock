@@ -56,7 +56,7 @@ class TestTemplateTagFuncs(TestCase):
         self.assertTrue(template_tags_mock.called)
         cache_set_mock.assert_called_once_with(cache_key, set(['active']))
 
-    @patch('lib.l10n_utils.gettext.get_lang_path')
+    @patch('lib.l10n_utils.gettext.get_l10n_path')
     @patch('lib.l10n_utils.gettext.get_template')
     @patch('lib.l10n_utils.gettext.parse_template')
     @patch('lib.l10n_utils.gettext.lang_file_tag_set')
