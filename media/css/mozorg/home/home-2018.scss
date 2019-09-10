@@ -43,6 +43,7 @@ $image-path: '/media/protocol/img';
 
 .c-primary-cta {
     background-color: $color-white;
+    min-height: 359px;
     position: relative;
     text-align: center;
     z-index: 2; // so it hides the sticky CTA
@@ -50,6 +51,7 @@ $image-path: '/media/protocol/img';
 
 .c-primary-cta-wrapper {
     position: relative;
+    padding-top: $layout-sm;
 
     p {
         margin-bottom: 0;
@@ -105,7 +107,7 @@ h4 {
     }
 
     .c-primary-cta-logo {
-        margin-bottom: $spacing-2xl;
+        margin-bottom: $spacing-xl;
     }
 }
 
@@ -128,9 +130,14 @@ h4 {
     }
 
     .download-firefox-primary-cta {
-        @include at2x('/media/img/home/2018/browser.png', 400px, 278px);
-        background-position: calc(50vw + 90px) 60px;
+        background-image: url('/media/img/home/2018/browser.png'), url('/media/img/home/2018/bg-primary.svg');
+        background-size: 400px 278px, auto;
+        background-position: calc(50vw + 34px) 60px, calc(50vw - 41px) -78px;
         background-repeat: no-repeat;
+
+        @media #{$mq-high-res} {
+            background-image: url('/media/img/home/2018/browser-high-res.png'), url('/media/img/home/2018/bg-primary.svg');
+        }
     }
 
     .fxaccount-primary-cta {
@@ -196,11 +203,6 @@ h4 {
     }
 }
 
-.c-sticky-cta-title-sub,
-.c-sticky-cta-desc-sub {
-    display: none; // Hidden on mobile
-}
-
 .sticky-dismiss {
     background: transparent;
     border: 0;
@@ -239,21 +241,6 @@ h4 {
     }
 }
 
-// Sticky CTA - Download Firefox
-.download-firefox-sticky-cta {
-
-    .download-button,
-    .download-list {
-        margin-bottom: 0;
-    }
-
-    .fx-privacy-link {
-        display: none;
-    }
-}
-
-// Sticky CTA - Firefox Account
-
 @media #{$mq-md} {
     .c-sticky-cta-title {
         background-position: top left;
@@ -262,17 +249,6 @@ h4 {
         line-height: 40px;
         padding-left: $layout-xl;
         position: static;
-        text-align: left;
-    }
-
-    .c-sticky-cta-title-sub {
-        @include font-base;
-        @include text-body-lg;
-        display: block;
-        float: left;
-        line-height: 40px;
-        margin-bottom: 0;
-        padding-right: $spacing-sm;
         text-align: left;
     }
 
@@ -301,6 +277,20 @@ h4 {
         line-height: 40px;
     }
 }
+
+// Sticky CTA - Download Firefox
+.download-firefox-sticky-cta {
+
+    .download-button,
+    .download-list {
+        margin-bottom: 0;
+    }
+
+    .fx-privacy-link {
+        display: none;
+    }
+}
+
 
 
 //* -------------------------------------------------------------------------- */
@@ -420,15 +410,25 @@ h4 {
     .c-secondary-cta {
         @include bidi(((text-align, left, right),));
         background-image: url('/media/img/home/2018/shield.svg'), url('/media/img/home/2018/bg-secondary.svg');
-        background-position: calc(50vw + 30px) 120px, 45vw 0;
+        background-position: calc(50vw + 100px) 120px, 50vw 0;
         background-repeat: no-repeat;
         padding: $layout-xs 0 $layout-sm 0;
     }
 
+    .c-secondary-cta-content {
+        max-width: 48%;
+    }
     .c-secondary-cta-title {
         background-position: left 35px;
     }
 }
+
+@media #{$mq-xl} {
+    .c-secondary-cta {
+        background-position: calc(50vw + 30px) 120px, 45vw 0;
+    }
+}
+
 
 
 //* -------------------------------------------------------------------------- */

@@ -18,14 +18,11 @@
 </section>
 {%- endmacro %}
 
-{% macro download_banner_sticky(title, sub_title, desc) -%}
+{% macro download_banner_sticky(title, desc) -%}
 <section id="download-firefox-sticky-cta" class="c-sticky-cta download-firefox-sticky-cta mzp-t-firefox mzp-t-dark is-js-dependent">
   <div class="mzp-l-content">
     <div class="c-sticky-cta-wrapper">
       <h2 class="c-sticky-cta-title">{{ title }}</h2>
-      {%- if sub_title -%}
-      <h3 class="c-sticky-cta-title-sub">{{ sub_title }}</h3>
-      {%- endif -%}
       {%- if desc -%}
       <p class="c-sticky-cta-desc-sub">{{ desc }}</p>
       {%- endif -%}
@@ -76,7 +73,9 @@
   <div class="mzp-l-content">
     <div class="c-sticky-cta-wrapper">
       <h2 class="c-sticky-cta-title">{{ title }}</h2>
-      <h3 class="c-sticky-cta-title-sub">{{ sub_title }}</h3>
+      {%- if desc -%}
+      <p class="c-sticky-cta-desc-sub">{{ desc }}</p>
+      {%- endif -%}
       <p class="c-sticky-cta-button"><a href="{{ url('firefox.accounts') }}" class="mzp-c-button mzp-t-small mzp-t-product" id="fxa-learn-sticky">{{ link_cta }}</a></p>
     </div>
   </div>
