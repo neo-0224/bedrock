@@ -387,9 +387,11 @@ h4 {
 
 
 //* -------------------------------------------------------------------------- */
-// Secondary CTA (page bottom)
+// Secondary Download CTA (page bottom)
 
 .c-secondary-cta {
+    background-color: $color-off-black;
+    color: #fff;
     overflow: hidden;
     position: relative;
     text-align: center;
@@ -401,80 +403,45 @@ h4 {
 }
 
 .c-secondary-cta-title {
+    @include at2x('/media/img/logos/firefox/logo-quantum.png', 40px, 40px);
     @include text-display-md;
+    background-position: center 35px;
+    background-repeat: no-repeat;
+    margin-bottom: $spacing-sm;
+    padding-top: 90px;
 }
 
 .c-secondary-cta-button {
     margin-bottom: $spacing-lg;
-    margin-top: $spacing-lg;
+    margin-top: $spacing-xl;
 }
 
-// Secondary CTA - Download Firefox
-.download-firefox-secondary-cta {
-    background-color: $color-gray-20;
+@media #{$mq-lg} {
+    .c-secondary-cta {
+        @include bidi(((text-align, left, right),));
+        background-image: url('/media/img/home/2018/shield.svg'), url('/media/img/home/2018/bg-secondary.svg');
+        background-position: calc(50vw + 30px) 120px, 45vw 0;
+        background-repeat: no-repeat;
+        padding: $layout-xs 0 $layout-sm 0;
+    }
 
     .c-secondary-cta-title {
-        @include at2x('/media/img/logos/firefox/master-sm.png', 80px, 80px);
-        background-position: center 35px;
-        background-repeat: no-repeat;
-        margin-bottom: $spacing-lg;
-        padding-top: 155px;
+        background-position: left 35px;
     }
 }
 
-// Secondary CTA - Firefox Account
+
+//* -------------------------------------------------------------------------- */
+// Secondary FxA CTA (page bottom)
+
+
 .fxaccount-secondary-cta.mzp-t-dark {
-    background-color: #2a0140;
+    background-color: $color-off-black;
 }
 
 .fxaccount-secondary-cta.mzp-t-product-firefox .mzp-c-call-out-content {
     @include at2x('/media/img/logos/firefox/master-md.png', 64px, 64px);
 }
-
-@media #{$mq-md} {
-    .c-secondary-cta {
-        @include bidi(((text-align, left, right),));
-    }
-
-    .c-secondary-cta-button {
-        margin-top: $spacing-md;
-    }
-
-    .download-firefox-secondary-cta {
-        min-height: 460px;
-
-        .c-secondary-cta-content {
-            width: 410px;
-        }
-
-        .c-secondary-cta-title {
-            background-position: left 43px;
-            margin-bottom: $spacing-sm;
-        }
-
-        &:before {
-            background: url('/media/img/home/2018/browser.png') top left / contain no-repeat;
-            content: '';
-            display: block;
-            height: 596px;
-            width: 970px;
-            position: absolute;
-            top: 55px;
-            left: 495px;
-
-            @media #{$mq-high-res} {
-                background-image: url('/media/img/home/2018/browser-high-res.png');
-            }
-        }
-    }
-}
-
-@media #{$mq-xl} {
-    .download-firefox-secondary-cta:before {
-        left: calc(50% - 160px);
-    }
-}
-
 
 //* -------------------------------------------------------------------------- */
 // YouTube iframe responsive in modal.

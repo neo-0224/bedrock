@@ -188,8 +188,8 @@
   </div>{#-- /.mozilla-content --#}
 
   {% call download_banner_secondary(
-    title=_('Supporting a healthy internet is easy.'),
-    sub_title=_('Get started by browsing with Firefox powered by Mozilla.')
+    title=_('Privacy over profit'),
+    sub_title=_('No shareholders. No data for sale.')
   ) %}
     {{ download_firefox(dom_id='download-secondary', download_location='secondary cta') }}
   {% endcall %}
@@ -200,7 +200,7 @@
     class='fxaccount-secondary-cta mzp-t-product-firefox mzp-t-firefox mzp-t-dark is-js-dependent',
     heading_level=2
   ) %}
-    <a href="{{ url('firefox.accounts') }}" class="mzp-c-button mzp-t-secondary mzp-t-dark" id="fxa-learn-secondary">{{ _('Learn More') }}</a>
+    <a href="{{ url('firefox.accounts') }}" class="mzp-c-button mzp-t-product mzp-t-dark" id="fxa-learn-secondary">{{ _('Learn More') }}</a>
   {% endcall %}
 
 </main>
