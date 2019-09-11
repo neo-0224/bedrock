@@ -1,3 +1,4 @@
+import json
 from functools import wraps
 from hashlib import sha256
 
@@ -6,7 +7,6 @@ from django.core.cache import caches
 from django.utils.encoding import force_bytes
 
 from fluent.runtime import FluentLocalization, FluentResourceLoader
-
 
 cache = caches['l10n']
 
@@ -30,10 +30,17 @@ class FluentL10n(FluentLocalization):
 
     def has_message(self, message_id):
         # assume English locales have the message
-        if self.locales[0].startswith('en-') or settings.DEV:
+        if self.locales[0].startswith('en-'):
             return True
 
         return message_id in self.localized_messages
+
+    def active_locales(self):
+        if settings.DEV:
+            return settings.DEV_LANGUAGES if settings.DEV else settings.PROD_LANGUAGES
+
+        # first resource is the one to check for activation
+        return get_active_locales(self.resource_ids[0])
 
 
 def _cache_key(*args, **kwargs):
@@ -54,6 +61,18 @@ def memoize(f):
         return value
 
     return inner
+
+
+@memoize
+def get_active_locales(ftl_file):
+    metadata_file = settings.FLUENT_REPO_PATH.joinpath('metadata', ftl_file).with_suffix('.json')
+    locales = [settings.LANGUAGE_CODE]
+    if metadata_file.exists():
+        with metadata_file.open() as mf:
+            metadata = json.load(mf)
+            locales.extend(metadata['active_locales'])
+
+    return locales
 
 
 @memoize

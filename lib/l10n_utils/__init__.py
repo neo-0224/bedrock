@@ -49,6 +49,7 @@ def render(request, template, context=None, ftl_files=None, **kwargs):
     # use copy() here to avoid modifying the dict in a view that will then
     # be different on the next call to the view.
     context = context.copy() if context else {}
+    l10n = None
 
     # Make sure we have a single template
     if isinstance(template, list):
@@ -59,7 +60,9 @@ def render(request, template, context=None, ftl_files=None, **kwargs):
         if isinstance(ftl_files, str):
             ftl_files = [ftl_files]
 
-        context['fluent_l10n'] = fluent_l10n([locale, 'en'], ftl_files)
+        ftl_files.extend(settings.FLUENT_DEFAULT_FILES)
+
+        context['fluent_l10n'] = l10n = fluent_l10n([locale, 'en'], ftl_files)
 
     # Every template gets its own .lang file, so figure out what it is
     # and pass it in the context
@@ -72,7 +75,11 @@ def render(request, template, context=None, ftl_files=None, **kwargs):
         translations = context['active_locales']
         del context['active_locales']
     else:
-        translations = translations_for_template(template)
+        if l10n:
+            translations = l10n.active_locales()
+        else:
+            translations = translations_for_template(template)
+
         # if `add_active_locales` is given then add it to the translations for the template
         if 'add_active_locales' in context:
             translations.extend(context['add_active_locales'])

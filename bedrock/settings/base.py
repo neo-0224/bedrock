@@ -231,10 +231,15 @@ DOTLANG_CACHE = config('L10N_CACHE_TIMEOUT', default='600', parser=int)
 
 DOTLANG_FILES = ['navigation', 'download_button', 'main']
 
-FLUENT_DEFAULT_FILES = ['navigation', 'download_button']
+FLUENT_DEFAULT_FILES = ['navigation', 'footer', 'download_button']
+FLUENT_REPO = config('FLUENT_REPO', default='https://github.com/mozmeao/bedrock-fluent-l10n.git')
+FLUENT_REPO_PATH = ROOT_PATH / 'l10n_external'
+# order matters. first sting found wins.
 FLUENT_PATHS = [
-    ROOT_PATH / 'l10n_external',
+    # local FTL files
     ROOT_PATH / 'l10n',
+    # remote FTL files from l10n team
+    FLUENT_REPO_PATH,
 ]
 
 # Paths that don't require a locale code in the URL.
