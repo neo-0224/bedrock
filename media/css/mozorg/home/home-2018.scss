@@ -59,19 +59,7 @@ $image-path: '/media/protocol/img';
 }
 
 .c-primary-cta-logo {
-    @include at2x('/media/img/logos/firefox/master-sm.png', 40px, 40px);
-    @include text-display-xs;
-    background-position: top left;
-    background-repeat: no-repeat;
-    display: inline-block;
-    line-height: 40px;
     margin: 0 auto $spacing-lg auto;
-    padding-left: $spacing-2xl;
-    text-align: left;
-
-    .download-firefox-primary-cta & {
-        @include at2x('/media/img/logos/firefox/logo-quantum.png', 40px, 40px);
-    }
 }
 
 .c-primary-cta-title {
@@ -142,7 +130,7 @@ h4 {
 
     .fxaccount-primary-cta {
         @include at2x('/media/img/home/2018/home.jpg', 815px, 362px);
-        background-position: calc(50vw - 14px) 0;
+        background-position: 50vw 0;
         background-repeat: no-repeat;
     }
 
@@ -245,8 +233,8 @@ h4 {
     .c-sticky-cta-title {
         background-position: top left;
         float: left;
-        height: 40px;
-        line-height: 40px;
+        height: 44px;
+        line-height: 44px;
         padding-left: $layout-xl;
         position: static;
         text-align: left;
@@ -264,7 +252,7 @@ h4 {
         right: -60px;
 
         &:after {
-            line-height: 40px;
+            line-height: 44px;
             text-align: center;
         }
     }
