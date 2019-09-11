@@ -5,16 +5,40 @@ from django.conf import settings
 from django.core.cache import caches
 from django.utils.encoding import force_bytes
 
-from fluent.runtime import FluentLocalization, RootedFileResourceLoader
-
-from lib.l10n_utils import translation
+from fluent.runtime import FluentLocalization, FluentResourceLoader
 
 
 cache = caches['l10n']
 
 
+class FluentL10n(FluentLocalization):
+    _localized_messages = None
+
+    def _localized_bundles(self):
+        for bundle in self._bundles():
+            if bundle.locales[0] == self.locales[0]:
+                yield bundle
+
+    @property
+    def localized_messages(self):
+        if self._localized_messages is None:
+            self._localized_messages = {}
+            for bundle in self._localized_bundles():
+                self._localized_messages.update(bundle._messages)
+
+        return self._localized_messages
+
+    def has_message(self, message_id):
+        # assume English locales have the message
+        if self.locales[0].startswith('en-') or settings.DEV:
+            return True
+
+        return message_id in self.localized_messages
+
+
 def _cache_key(*args, **kwargs):
-    return sha256(force_bytes(f'fluent:{args}:{kwargs}')).hexdigest()
+    key = f'fluent:{args}:{kwargs}'
+    return sha256(force_bytes(key)).hexdigest()
 
 
 def memoize(f):
@@ -33,55 +57,34 @@ def memoize(f):
 
 
 @memoize
-def fluent_bundle(locales, files):
+def fluent_l10n(locales, files):
     if isinstance(locales, str):
         locales = [locales]
 
     # file IDs may not have file extension
     files = [f'{f}.ftl' for f in files if not f.endswith('.ftl')]
-    # temporary until MultiRootLoader lands
-    path = f'{settings.FLUENT_PATHS[1]}/{{locale}}/'
-    loader = RootedFileResourceLoader(path)
-    return FluentLocalization(locales, files, loader)
-
-
-def has_message(message_id, bundle):
-    # assume English locales have the message
-    if bundle.locales[0].startswith('en-'):
-        return True
-
-    if not bundle._bundle_cache:
-        # need to warm the cache in the bundle
-        bundle.format_value('warm')
-
-    if not bundle._bundle_cache:
-        # still no bundles in the cache, no ftl file
-        return False
-
-    return bundle._bundle_cache[0].has_message(message_id)
+    paths = [f'{path}/{{locale}}/' for path in settings.FLUENT_PATHS]
+    loader = FluentResourceLoader(paths)
+    return FluentL10n(locales, files, loader)
 
 
 @memoize
-def _has_messages(locale, message_ids, files):
-    bundle = fluent_bundle(locale, files)
-    return all([has_message(mid, bundle) for mid in message_ids])
+def _has_messages(l10n, message_ids):
+    return [l10n.has_message(mid) for mid in message_ids]
 
 
-def has_all_messages(message_ids, files):
-    locale = translation.get_language(True)
-    return _has_messages(locale, message_ids, files)
+def has_all_messages(l10n, message_ids):
+    return all(_has_messages(l10n, message_ids))
+
+
+def has_any_messages(l10n, message_ids):
+    return any(_has_messages(l10n, message_ids))
 
 
 @memoize
-def _get_translation(locale, message_id, files, fallback, **kwargs):
-    bundle = fluent_bundle([locale, 'en'], files)
+def translate(l10n, message_id, fallback=None, **kwargs):
     # check the `locale` bundle for the message if we have a fallback defined
-    if fallback and not has_message(message_id, bundle):
+    if fallback and not l10n.has_message(message_id):
         message_id = fallback
 
-    return bundle.format_value(message_id, kwargs)
-
-
-def translate(message_id, files, fallback=None, **kwargs):
-    locale = translation.get_language(True)
-    return _get_translation(locale, message_id, files, fallback, **kwargs)
+    return l10n.format_value(message_id, kwargs)
