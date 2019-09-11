@@ -22,7 +22,7 @@
     <header class="c-simple-header">
         <h1 class="c-simple-header-title">{{ ftl('not-a-string', fallback='fluent-header-title') }}</h1>
         {% if ftl_has_messages('fluent-title', 'fluent-page-desc') %}
-            <p>{{ ftl('fluent-page-desc') }}</p>
+            <p>{{ ftl('fluent-page-desc', dude='Abiding', url='stuff') }}</p>
         {% else %}
             <p>It does not have all of the messages.</p>
         {% endif %}
