@@ -15,6 +15,7 @@ from django.views.generic import TemplateView
 from bedrock.base.urlresolvers import split_path
 
 from .dotlang import get_translations_native_names
+from .fluent import fluent_l10n
 from .gettext import translations_for_template
 from .utils import get_l10n_path
 
@@ -54,7 +55,11 @@ def render(request, template, context=None, ftl_files=None, **kwargs):
         template = template[0]
 
     if ftl_files:
-        context['ftl_files'] = ftl_files
+        locale = get_locale(request)
+        if isinstance(ftl_files, str):
+            ftl_files = [ftl_files]
+
+        context['fluent_l10n'] = fluent_l10n([locale, 'en'], ftl_files)
 
     # Every template gets its own .lang file, so figure out what it is
     # and pass it in the context
