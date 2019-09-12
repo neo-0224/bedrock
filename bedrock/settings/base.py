@@ -19,11 +19,16 @@ from bedrock.base.config_manager import config
 
 # ROOT path of the project. A pathlib.Path object.
 ROOT_PATH = Path(__file__).resolve().parents[2]
+GIT_REPOS_PATH = ROOT_PATH / 'git-repos'
 ROOT = str(ROOT_PATH)
 
 
 def path(*args):
     return abspath(str(ROOT_PATH.joinpath(*args)))
+
+
+def git_repo_path(*args):
+    return abspath(str(GIT_REPOS_PATH.joinpath(*args)))
 
 
 # Is this a dev instance?
@@ -99,7 +104,7 @@ PROD_DETAILS_STORAGE = config('PROD_DETAILS_STORAGE',
                               default='product_details.storage.PDDatabaseStorage')
 # path into which to clone the p-d json repo
 PROD_DETAILS_JSON_REPO_PATH = config('PROD_DETAILS_JSON_REPO_PATH',
-                                     default=path('product_details_json'))
+                                     default=git_repo_path('product_details_json'))
 PROD_DETAILS_JSON_REPO_URI = config('PROD_DETAILS_JSON_REPO_URI',
                                     default='https://github.com/mozilla-releng/product-details.git')
 PROD_DETAILS_JSON_REPO_BRANCH = config('PROD_DETAILS_JSON_REPO_BRANCH', default='production')
@@ -232,8 +237,10 @@ DOTLANG_CACHE = config('L10N_CACHE_TIMEOUT', default='600', parser=int)
 DOTLANG_FILES = ['navigation', 'download_button', 'main']
 
 FLUENT_DEFAULT_FILES = ['navigation', 'footer', 'download_button']
-FLUENT_REPO = config('FLUENT_REPO', default='https://github.com/mozmeao/bedrock-fluent-l10n.git')
-FLUENT_REPO_PATH = ROOT_PATH / 'l10n_external'
+FLUENT_REPO = config('FLUENT_REPO', default='https://github.com/mozmeao/www-l10n')
+FLUENT_REPO_PATH = GIT_REPOS_PATH / 'www-l10n'
+FLUENT_L10N_TEAM_REPO = config('FLUENT_REPO', default='https://github.com/mozmeao/www-l10n')
+FLUENT_L10N_TEAM_REPO_PATH = GIT_REPOS_PATH / 'l10n-team'
 # order matters. first sting found wins.
 FLUENT_PATHS = [
     # local FTL files
@@ -669,7 +676,7 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 # Google Analytics
 GA_ACCOUNT_CODE = ''
 
-EXTERNAL_FILES_PATH = config('EXTERNAL_FILES_PATH', default=path('community_data'))
+EXTERNAL_FILES_PATH = config('EXTERNAL_FILES_PATH', default=git_repo_path('community_data'))
 EXTERNAL_FILES_BRANCH = config('EXTERNAL_FILES_BRANCH', default='master')
 EXTERNAL_FILES_REPO = config('EXTERNAL_FILES_REPO', default='https://github.com/mozilla/community-data.git')
 EXTERNAL_FILES = {
@@ -1311,21 +1318,21 @@ if DEV:
 else:
     content_cards_default_branch = 'prod-processed'
 
-CONTENT_CARDS_PATH = config('CONTENT_CARDS_PATH', default=path('content_cards'))
+CONTENT_CARDS_PATH = config('CONTENT_CARDS_PATH', default=git_repo_path('content_cards'))
 CONTENT_CARDS_REPO = config('CONTENT_CARDS_REPO', default='https://github.com/mozmeao/www-admin.git')
 CONTENT_CARDS_BRANCH = config('CONTENT_CARDS_BRANCH', default=content_cards_default_branch)
 CONTENT_CARDS_URL = config('CONTENT_CARDS_URL', default=STATIC_URL)
 
-RELEASE_NOTES_PATH = config('RELEASE_NOTES_PATH', default=path('release_notes'))
+RELEASE_NOTES_PATH = config('RELEASE_NOTES_PATH', default=git_repo_path('release_notes'))
 RELEASE_NOTES_REPO = config('RELEASE_NOTES_REPO', default='https://github.com/mozilla/release-notes.git')
 RELEASE_NOTES_BRANCH = config('RELEASE_NOTES_BRANCH', default='master')
 
-WWW_CONFIG_PATH = config('WWW_CONFIG_PATH', default=path('www_config'))
+WWW_CONFIG_PATH = config('WWW_CONFIG_PATH', default=git_repo_path('www_config'))
 WWW_CONFIG_REPO = config('WWW_CONFIG_REPO', default='https://github.com/mozmeao/www-config.git')
 WWW_CONFIG_BRANCH = config('WWW_CONFIG_BRANCH', default='master')
 
 MOFO_SECURITY_ADVISORIES_PATH = config('MOFO_SECURITY_ADVISORIES_PATH',
-                                       default=path('mofo_security_advisories'))
+                                       default=git_repo_path('mofo_security_advisories'))
 MOFO_SECURITY_ADVISORIES_REPO = config('MOFO_SECURITY_ADVISORIES_REPO',
                                        default='https://github.com/mozilla/'
                                                'foundation-security-advisories.git')
