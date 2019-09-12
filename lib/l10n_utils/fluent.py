@@ -5,9 +5,19 @@ from hashlib import sha256
 from django.conf import settings
 from django.core.cache import caches
 from django.utils.encoding import force_bytes
+from django.utils.functional import lazy
 
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 
+
+__all__ = [
+    'fluent_l10n',
+    'has_any_messages',
+    'has_all_messages',
+    'translate',
+    'ftl',
+    'ftl_lazy',
+]
 cache = caches['l10n']
 
 
@@ -107,3 +117,9 @@ def translate(l10n, message_id, fallback=None, **kwargs):
         message_id = fallback
 
     return l10n.format_value(message_id, kwargs)
+
+
+# alias for use in views
+ftl = translate
+# for use in python outside of a view
+ftl_lazy = lazy(translate, str)
