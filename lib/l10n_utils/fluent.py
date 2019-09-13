@@ -8,6 +8,7 @@ from django.utils.encoding import force_bytes
 from django.utils.functional import lazy
 
 from fluent.runtime import FluentLocalization, FluentResourceLoader
+from fluent.syntax.ast import GroupComment, Message
 
 
 __all__ = [
@@ -22,12 +23,23 @@ cache = caches['l10n']
 
 
 class FluentL10n(FluentLocalization):
+    _messages = None
     _localized_messages = None
+    _required_messages = None
 
     def _localized_bundles(self):
         for bundle in self._bundles():
             if bundle.locales[0] == self.locales[0]:
                 yield bundle
+
+    @property
+    def messages(self):
+        if self._messages is None:
+            self._messages = {}
+            for bundle in self._bundles():
+                self._messages.update(bundle._messages)
+
+        return self._messages
 
     @property
     def localized_messages(self):
@@ -37,6 +49,28 @@ class FluentL10n(FluentLocalization):
                 self._localized_messages.update(bundle._messages)
 
         return self._localized_messages
+
+    @property
+    def required_messages(self):
+        """
+        Look in the "en" file for message IDs grouped by a comment that starts with "Required"
+
+        :return: list of message IDs
+        """
+        if self._required_messages is None:
+            self._required_messages = {}
+            for resources in self.resource_loader.resources('en', self.resource_ids):
+                for resource in resources:
+                    in_required = False
+                    for item in resource.body:
+                        if isinstance(item, GroupComment):
+                            in_required = item.content.lower().startswith('required')
+                            continue
+
+                        if isinstance(item, Message) and in_required:
+                            self._required_messages[item.id.name] = item
+
+        return self._required_messages
 
     def has_message(self, message_id):
         # assume English locales have the message
@@ -51,6 +85,9 @@ class FluentL10n(FluentLocalization):
 
         # first resource is the one to check for activation
         return get_active_locales(self.resource_ids[0])
+
+    def percent_translated(self):
+        return (float(len(self.localized_messages)) / float(len(self.messages))) * 100
 
 
 def _cache_key(*args, **kwargs):
