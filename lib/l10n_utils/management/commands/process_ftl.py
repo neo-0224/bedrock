@@ -9,6 +9,7 @@ from bedrock.utils.git import GitRepo
 
 class Command(BaseCommand):
     help = 'Processes .ftl files from l10n team for use in bedrock'
+    quiet = False
 
     def add_arguments(self, parser):
         parser.add_argument('-q', '--quiet', action='store_true', dest='quiet', default=False,
@@ -20,13 +21,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.quiet = options['quiet']
-        self.update_lang_files()
         self.update_fluent_files()
+        self.update_l10n_team_files()
 
-    def update_lang_files(self):
-        repo = GitRepo(settings.LOCALES_PATH, settings.LOCALES_REPO)
+    def update_l10n_team_files(self):
+        repo = GitRepo(settings.FLUENT_L10N_TEAM_REPO_PATH, settings.FLUENT_L10N_TEAM_REPO)
         repo.update()
-        self.output('Updated .lang files')
+        self.output('Updated l10n team .ftl files')
 
     def update_fluent_files(self):
         repo = GitRepo(settings.FLUENT_REPO_PATH, settings.FLUENT_REPO)

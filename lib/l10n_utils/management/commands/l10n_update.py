@@ -9,6 +9,7 @@ from bedrock.utils.git import GitRepo
 
 class Command(BaseCommand):
     help = 'Clones or updates l10n info from github'
+    quiet = False
 
     def add_arguments(self, parser):
         parser.add_argument('-q', '--quiet', action='store_true', dest='quiet', default=False,

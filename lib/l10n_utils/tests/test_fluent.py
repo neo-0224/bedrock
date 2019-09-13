@@ -42,6 +42,18 @@ class TestFluentL10n(TestCase):
         assert l10n.has_message('fluent-title')
         assert not l10n.has_message('brand-new-string')
 
+    def test_required_messages(self):
+        l10n = get_l10n()
+        req_messages = l10n.required_messages
+        assert 'fluent-title' in req_messages
+        assert 'fluent-page-desc' in req_messages
+        assert 'fluent-header-title' not in req_messages
+        assert 'brand-new-string' not in req_messages
+
+    def test_percent_tranlated(self):
+        l10n = get_l10n()
+        assert l10n.percent_translated() == 75.0
+
 
 class TestFluentTranslationUtils(TestCase):
     def setUp(self):
