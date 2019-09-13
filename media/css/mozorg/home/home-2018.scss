@@ -427,8 +427,13 @@ h4 {
     background-color: $color-off-black;
 }
 
-.fxaccount-secondary-cta.mzp-t-product-firefox .mzp-c-call-out-content {
-    @include at2x('/media/img/logos/firefox/master-md.png', 64px, 64px);
+.fxaccount-secondary-cta.mzp-t-product-firefox {
+    .mzp-c-call-out-content {
+        @include at2x('/media/img/logos/firefox/master-md.png', 64px, 64px);
+    }
+    .mzp-c-call-out-title {
+        margin-bottom: $spacing-md;
+    }
 }
 
 //* -------------------------------------------------------------------------- */
