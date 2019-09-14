@@ -76,7 +76,7 @@ def render(request, template, context=None, ftl_files=None, **kwargs):
         del context['active_locales']
     else:
         if l10n:
-            translations = l10n.active_locales()
+            translations = l10n.active_locales
         else:
             translations = translations_for_template(template)
 
