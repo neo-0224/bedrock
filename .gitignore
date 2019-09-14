@@ -33,6 +33,7 @@ bedrock_db_info.json
 james.ini
 test-results.xml
 tests/unit/coverage
+/git-repos
 /bedrock/externalfiles/files_cache
 supervisord.log
 .idea
