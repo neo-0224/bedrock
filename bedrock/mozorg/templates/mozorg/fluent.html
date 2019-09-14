@@ -20,7 +20,10 @@
 {% block content %}
 <main role="main" class="mzp-l-content">
     <header class="c-simple-header">
-        <h1 class="c-simple-header-title">{{ ftl('not-a-string', fallback='fluent-header-title') }}</h1>
+        <h1 class="c-simple-header-title">{{ ftl('brand-new-string', fallback='fluent-header-title') }}</h1>
+        {% if ftl_has_all_messages('brand-new-string') %}
+          <h2 class="c-simple-header-title">{{ ftl('fluent-header-title') }}</h2>
+        {% endif %}
         {% if ftl_has_all_messages('fluent-title', 'fluent-page-desc') %}
             <p>{{ ftl('fluent-page-desc', dude='Abiding', url='stuff') }}</p>
         {% else %}
