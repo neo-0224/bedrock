@@ -1,11 +1,11 @@
 import json
 from functools import wraps
-from hashlib import sha256
+from hashlib import md5
 
 from django.conf import settings
 from django.core.cache import caches
 from django.utils.encoding import force_bytes
-from django.utils.functional import lazy
+from django.utils.functional import lazy, cached_property
 
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 from fluent.syntax.ast import GroupComment, Message
@@ -23,62 +23,53 @@ cache = caches['l10n']
 
 
 class FluentL10n(FluentLocalization):
-    _messages = None
-    _localized_messages = None
-    _required_messages = None
-
     def _localized_bundles(self):
         for bundle in self._bundles():
             if bundle.locales[0] == self.locales[0]:
                 yield bundle
 
-    @property
-    def messages(self):
-        if self._messages is None:
-            self._messages = {}
-            for bundle in self._bundles():
-                self._messages.update(bundle._messages)
+    @cached_property
+    def _messages(self):
+        messages = {}
+        for bundle in self._bundles():
+            messages.update(bundle._messages)
 
-        return self._messages
+        return messages
 
-    @property
-    def localized_messages(self):
-        if self._localized_messages is None:
-            self._localized_messages = {}
-            for bundle in self._localized_bundles():
-                self._localized_messages.update(bundle._messages)
+    @cached_property
+    def _localized_messages(self):
+        messages = {}
+        for bundle in self._localized_bundles():
+            messages.update(bundle._messages)
 
-        return self._localized_messages
+        return messages
 
-    @property
-    def required_messages(self):
+    @cached_property
+    def required_message_ids(self):
         """
         Look in the "en" file for message IDs grouped by a comment that starts with "Required"
 
         :return: list of message IDs
         """
-        if self._required_messages is None:
-            self._required_messages = {}
-            for resources in self.resource_loader.resources('en', self.resource_ids):
-                for resource in resources:
-                    in_required = False
-                    for item in resource.body:
-                        if isinstance(item, GroupComment):
-                            in_required = item.content.lower().startswith('required')
-                            continue
+        messages = set()
+        for resources in self.resource_loader.resources('en', self.resource_ids):
+            for resource in resources:
+                in_required = False
+                for item in resource.body:
+                    if isinstance(item, GroupComment):
+                        in_required = item.content.lower().startswith('required')
+                        continue
 
-                        if isinstance(item, Message) and in_required:
-                            self._required_messages[item.id.name] = item
+                    if isinstance(item, Message) and in_required:
+                        messages.add(item.id.name)
 
-        return self._required_messages
+        return list(messages)
 
-    def has_message(self, message_id):
-        # assume English locales have the message
-        if self.locales[0].startswith('en-'):
-            return True
+    @cached_property
+    def has_required_messages(self):
+        return all(self.has_message(m) for m in self.required_message_ids)
 
-        return message_id in self.localized_messages
-
+    @cached_property
     def active_locales(self):
         if settings.DEV:
             return settings.DEV_LANGUAGES if settings.DEV else settings.PROD_LANGUAGES
@@ -86,13 +77,21 @@ class FluentL10n(FluentLocalization):
         # first resource is the one to check for activation
         return get_active_locales(self.resource_ids[0])
 
+    @cached_property
     def percent_translated(self):
-        return (float(len(self.localized_messages)) / float(len(self.messages))) * 100
+        return (float(len(self._localized_messages)) / float(len(self._messages))) * 100
+
+    def has_message(self, message_id):
+        # assume English locales have the message
+        if self.locales[0].startswith('en-'):
+            return True
+
+        return message_id in self._localized_messages
 
 
 def _cache_key(*args, **kwargs):
     key = f'fluent:{args}:{kwargs}'
-    return sha256(force_bytes(key)).hexdigest()
+    return md5(force_bytes(key)).hexdigest()
 
 
 def memoize(f):

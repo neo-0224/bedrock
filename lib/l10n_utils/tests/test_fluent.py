@@ -34,8 +34,8 @@ class TestFluentL10n(TestCase):
 
     def test_localized_messages(self):
         l10n = get_l10n()
-        assert len(l10n.localized_messages) == 3
-        assert 'brand-new-string' not in l10n.localized_messages
+        assert len(l10n._localized_messages) == 3
+        assert 'brand-new-string' not in l10n._localized_messages
 
     def test_has_message(self):
         l10n = get_l10n()
@@ -44,15 +44,21 @@ class TestFluentL10n(TestCase):
 
     def test_required_messages(self):
         l10n = get_l10n()
-        req_messages = l10n.required_messages
+        req_messages = l10n.required_message_ids
         assert 'fluent-title' in req_messages
         assert 'fluent-page-desc' in req_messages
         assert 'fluent-header-title' not in req_messages
         assert 'brand-new-string' not in req_messages
 
-    def test_percent_tranlated(self):
+    def test_percent_translated(self):
         l10n = get_l10n()
-        assert l10n.percent_translated() == 75.0
+        assert l10n.percent_translated == 75.0
+
+    def test_has_required_messages(self):
+        l10n = get_l10n()
+        assert l10n.has_required_messages
+        l10n = get_l10n(['fr', 'en'])
+        assert not l10n.has_required_messages
 
 
 class TestFluentTranslationUtils(TestCase):
