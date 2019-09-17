@@ -11,20 +11,7 @@ from django.conf import settings
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 
-from lib.l10n_utils.dotlang import parse as parse_lang, FORMAT_IDENTIFIER_RE
-
-
-def _replace_variables(match):
-    return f'{{ ${match.group(2)} }}'
-
-
-def convert_variables(lang_str):
-    return FORMAT_IDENTIFIER_RE.sub(_replace_variables, lang_str)
-
-
-def lang_strings(filename):
-    path = settings.ROOT_PATH.joinpath('locale', 'templates', filename)
-    return parse_lang(path, skip_untranslated=False)
+from lib.l10n_utils.dotlang import parse as parse_lang, convert_variables
 
 
 def string_to_ftl_id(string):
@@ -83,7 +70,7 @@ class Command(BaseCommand):
         return '_'.join([self.filename_prefix, string_to_ftl_id(string)])
 
     def get_translations(self):
-        path = settings.ROOT_PATH.joinpath('locale', 'en-US', self.filename)
+        path = settings.LOCALES_PATH.joinpath('en-US', self.filename)
         return parse_lang(path, skip_untranslated=False, extract_comments=True)
 
     def get_ftl_strings(self):

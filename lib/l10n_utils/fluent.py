@@ -13,6 +13,7 @@ from fluent.syntax.ast import GroupComment, Message
 
 __all__ = [
     'fluent_l10n',
+    'get_metadata_file_path',
     'has_any_messages',
     'has_all_messages',
     'translate',
@@ -20,6 +21,10 @@ __all__ = [
     'ftl_lazy',
 ]
 cache = caches['l10n']
+
+
+def get_metadata_file_path(ftl_file):
+    return settings.FLUENT_REPO_PATH.joinpath('metadata', ftl_file).with_suffix('.json')
 
 
 class FluentL10n(FluentLocalization):
@@ -111,7 +116,7 @@ def memoize(f):
 
 @memoize
 def get_active_locales(ftl_file):
-    metadata_file = settings.FLUENT_REPO_PATH.joinpath('metadata', ftl_file).with_suffix('.json')
+    metadata_file = get_metadata_file_path(ftl_file)
     locales = [settings.LANGUAGE_CODE]
     if metadata_file.exists():
         with metadata_file.open() as mf:
