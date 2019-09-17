@@ -82,7 +82,7 @@ def po_msgs(domain):
 
 def translated_strings(file_):
     path = join(settings.ROOT, 'locale', 'templates', file_)
-    trans = list(parse_lang(path).keys())
+    trans = list(parse_lang(path, skip_untranslated=False).keys())
     return trans
 
 

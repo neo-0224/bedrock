@@ -239,12 +239,13 @@ DOTLANG_FILES = ['navigation', 'download_button', 'main']
 FLUENT_DEFAULT_FILES = ['navigation', 'footer', 'download_button']
 FLUENT_REPO = config('FLUENT_REPO', default='https://github.com/mozmeao/www-l10n')
 FLUENT_REPO_PATH = GIT_REPOS_PATH / 'www-l10n'
+FLUENT_LOCAL_PATH = ROOT_PATH / 'l10n'
 FLUENT_L10N_TEAM_REPO = config('FLUENT_REPO', default='https://github.com/mozmeao/www-l10n')
 FLUENT_L10N_TEAM_REPO_PATH = GIT_REPOS_PATH / 'l10n-team'
 # order matters. first sting found wins.
 FLUENT_PATHS = [
     # local FTL files
-    ROOT_PATH / 'l10n',
+    FLUENT_LOCAL_PATH,
     # remote FTL files from l10n team
     FLUENT_REPO_PATH,
 ]
