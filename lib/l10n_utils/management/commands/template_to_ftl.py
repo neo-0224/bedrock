@@ -9,15 +9,11 @@ from io import StringIO
 from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
-
-from fluent.runtime import FluentResourceLoader
-from fluent.syntax.ast import Message
 
 from lib.l10n_utils.extract import tweak_message
+from lib.l10n_utils.utils import get_ftl_file_data
 
 
-COMMENT_RE = re.compile(r'LANG_ID_HASH: (\w{32})')
 GETTEXT_RE = re.compile(r'{{\s*_\([\'"]([^|]+)[\'"]\)')
 FORMAT_RE = re.compile(r'\)\s*\|\s*format\(')
 
@@ -26,7 +22,6 @@ class Command(BaseCommand):
     help = 'Convert a template to use Fluent for l10n'
     _filename = None
     _template = None
-    resource_loader = None
 
     def add_arguments(self, parser):
         parser.add_argument('ftl_file')
@@ -65,16 +60,7 @@ class Command(BaseCommand):
 
     @cached_property
     def ftl_file_data(self):
-        data = {}
-        for resources in self.resource_loader.resources('en', [self.filename]):
-            for resource in resources:
-                for item in resource.body:
-                    if isinstance(item, Message):
-                        match = COMMENT_RE.search(item.comment.content)
-                        if match:
-                            data[match.group(1)] = item.id.name
-
-        return data
+        return get_ftl_file_data(self.filename)
 
     def template_replace(self, match):
         ftl_data = self.ftl_file_data
@@ -105,7 +91,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.filename = options['ftl_file']
         self.template = options['template']
-        self.resource_loader = FluentResourceLoader(f'{settings.FLUENT_LOCAL_PATH}/{{locale}}/')
         if options['quiet']:
             self.stdout._out = StringIO()
 

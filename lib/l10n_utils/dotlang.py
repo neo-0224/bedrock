@@ -33,6 +33,14 @@ TAG_REGEX = re.compile(r"^## ([\w-]+) ##")
 cache = caches['l10n']
 
 
+def _replace_variables(match):
+    return f'{{ ${match.group(2)} }}'
+
+
+def convert_variables(lang_str):
+    return FORMAT_IDENTIFIER_RE.sub(_replace_variables, lang_str)
+
+
 def parse(path, skip_untranslated=True, extract_comments=False):
     """
     Parse a dotlang file and return a dict of translations.
