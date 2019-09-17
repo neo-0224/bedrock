@@ -1,0 +1,77 @@
+{# This Source Code Form is subject to the terms of the Mozilla Public
+ # License, v. 2.0. If a copy of the MPL was not distributed with this
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/. -#}
+
+{% extends "mozorg/about-base.html" %}
+
+{% block page_title %}{{ ftl('mission_were_building_a_better_internet') }}{% endblock %}
+{% set body_id = "about-mission" %}
+
+{% block page_css %}
+  {{ css_bundle('mission') }}
+{% endblock %}
+
+{% block article %}
+<article>
+  <h1 class="mzp-c-article-title">{{ ftl('mission_were_building_a_better_internet') }}</h1>
+  {% if l10n_has_tag('bug_1251061_copy_update') %}
+    <p class="lede">{{ ftl('mission_our_mission_is_to_ensure_the_internet') }}</p>
+  {% else %}
+    <p class="lede">{{ ftl('mission_our_mission_is_to_promote_openness') }}</p>
+  {% endif %}
+  <p>
+    {{ ftl('mission_at_mozilla_were_a_global_community') }}
+    {{ ftl('mission_we_believe_this_act_of_human_collaboration') }}
+  </p>
+  <p>{{ ftl('mission_read_the_mozilla_manifesto_to_learn', url=url('mozorg.about.manifesto')) }}</p>
+
+  <figure>
+    {{ video('Mozilla_2011_Story.webm',
+      'Mozilla_2011_Story.ogv',
+      'Mozilla_2011_Story.mp4',
+      prefix='//videos.cdn.mozilla.net/brand/',
+      poster=static('img/mission/poster-mission.jpg')) }}
+    <figcaption>{{ ftl('mission_watch_the_video_above_to_learn_more') }}</figcaption>
+  </figure>
+
+  <ul>
+    <li>
+      <h4><a href="{{ url('mozorg.contribute.index') }}">{{ ftl('mission_get_involved') }}</a></h4>
+      <p>{{ ftl('mission_volunteer_opportunities_in_a_number') }}</p>
+    </li>
+    <li>
+      <h4><a href="{{ url('mozorg.about.history') }}">{{ ftl('mission_history') }}</a></h4>
+      <p>{{ ftl('mission_where_we_come_from_and_how_we_got') }}</p>
+    </li>
+    <li>
+      <h4><a href="{{ url('mozorg.about.forums.forums') }}">{{ ftl('mission_forums') }}</a></h4>
+      <p>{{ ftl('mission_topics_include_support_products') }}</p>
+    </li>
+    <li>
+      <h4><a href="{{ url('mozorg.about.governance.governance') }}">{{ ftl('mission_governance') }}</a></h4>
+      <p>{{ ftl('mission_our_structure_organization_and_the') }}</p>
+    </li>
+  </ul>
+
+</article>
+{% endblock %}
+
+{% block email_form %}
+
+  <div class="mzp-l-content">
+    <aside class="mzp-c-newsletter t-love">
+      <div class="mzp-c-newsletter-image">
+        <img src="{{ static('img/newsletter/love-news.svg') }}" alt="" height="172" width="200">
+      </div>
+
+      <div class="newsletter-content">
+        {% if LANG.startswith('en-') %}
+          {{ email_newsletter_form(protocol_component=true, newsletters='mozilla-foundation', title=_('Sign up. Read up.<br> Make a difference.'), subtitle=_('Get the Mozilla newsletter and help us keep the Web free and open.')) }}
+        {% else %}
+          {{ email_newsletter_form(protocol_component=true) }}
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+
+{% endblock %}
