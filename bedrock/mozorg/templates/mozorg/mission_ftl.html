@@ -14,11 +14,7 @@
 {% block article %}
 <article>
   <h1 class="mzp-c-article-title">{{ ftl('mission_were_building_a_better_internet') }}</h1>
-  {% if l10n_has_tag('bug_1251061_copy_update') %}
-    <p class="lede">{{ ftl('mission_our_mission_is_to_ensure_the_internet') }}</p>
-  {% else %}
-    <p class="lede">{{ ftl('mission_our_mission_is_to_promote_openness') }}</p>
-  {% endif %}
+  <p class="lede">{{ ftl('mission_our_mission_is_to_ensure_the_internet', fallback='mission_our_mission_is_to_promote_openness') }}</p>
   <p>
     {{ ftl('mission_at_mozilla_were_a_global_community') }}
     {{ ftl('mission_we_believe_this_act_of_human_collaboration') }}
