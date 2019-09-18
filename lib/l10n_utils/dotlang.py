@@ -34,7 +34,11 @@ cache = caches['l10n']
 
 
 def _replace_variables(match):
-    return f'{{ ${match.group(2)} }}'
+    var_name = match[2]
+    if var_name:
+        return f'{{ ${var_name} }}'
+
+    return match[0]
 
 
 def convert_variables(lang_str):

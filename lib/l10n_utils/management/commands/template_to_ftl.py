@@ -14,8 +14,12 @@ from lib.l10n_utils.extract import tweak_message
 from lib.l10n_utils.utils import get_ftl_file_data
 
 
-GETTEXT_RE = re.compile(r'\b_\([\'"]([^)]+)[\'"]\)')
-FORMAT_RE = re.compile(r'\)\s*\|\s*format\(')
+GETTEXT_RE = re.compile(r'\b_\([\'"](?P<string>.+?)[\'"]\)'
+                        r'(\s*\|\s*format\((?P<args>\w.+?)\))?', re.S)
+TRANS_BLOCK_RE = re.compile(r'{%-?\s+trans\s+((?P<args>\w.+?)\s+)?-?%\}\s*'
+                            r'(?P<string>.+?)'
+                            r'\s*{%-?\s+endtrans\s+-?%\}', re.S)
+STR_VARIABLE_RE = re.compile(r'{{\s*(?P<var>\w+?)\s*}}')
 
 
 class Command(BaseCommand):
@@ -63,26 +67,38 @@ class Command(BaseCommand):
         return get_ftl_file_data(self.filename)
 
     def template_replace(self, match):
+        trans_block = match[0].startswith('{%')
         ftl_data = self.ftl_file_data
-        str_id = tweak_message(match.group(1))
+        str_id = tweak_message(match['string'])
+        if '%s' in str_id:
+            self.stderr.write('WARNING: Place-holder with no variable name found in string. '
+                              'Convert "%s" to a Fluent variable in the new file.')
+        str_id = STR_VARIABLE_RE.sub(r'%(\1)s', str_id)
         str_hash = md5(str_id.encode()).hexdigest()
         ftl_id = ftl_data.get(str_hash)
         if ftl_id:
-            return f"ftl('{ftl_id}')"
+            if match['args']:
+                new_str = f"ftl('{ftl_id}', {match['args']})"
+            else:
+                new_str = f"ftl('{ftl_id}')"
 
-        return match.group(0)
+            if trans_block:
+                new_str = f"{{{{ {new_str} }}}}"
+
+            return new_str
+
+        print(f'NO MATCH: {str_id}')
+        return match[0]
 
     def ftl_template_lines(self):
-        new_lines = []
         with self.template.open('r') as tfp:
-            for line in tfp:
-                fixed_line = GETTEXT_RE.sub(self.template_replace, line)
-                fixed_line = FORMAT_RE.sub(', ', fixed_line)
-                new_lines.append(fixed_line)
-                self.stdout.write('.', ending='')
-                self.stdout.flush()
+            template_str = tfp.read()
+            template_str = GETTEXT_RE.sub(self.template_replace, template_str)
+            template_str = TRANS_BLOCK_RE.sub(self.template_replace, template_str)
+            self.stdout.write('.', ending='')
+            self.stdout.flush()
 
-        return new_lines
+        return template_str
 
     def write_ftl_template(self):
         with self.ftl_template.open('w') as ftlt:

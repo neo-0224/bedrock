@@ -79,6 +79,9 @@ class Command(BaseCommand):
         all_strings = {}
         for str_id, string in translations.items():
             comment, string = string
+            if '%s' in string:
+                self.stderr.write('WARNING: Place-holder with no variable name found in string. '
+                                  'Convert "%s" to a Fluent variable in the new file.')
             ftl_id = self.get_ftl_id(str_id)
             # make sure it's unique
             if ftl_id in all_strings:
@@ -99,6 +102,7 @@ class Command(BaseCommand):
         return all_strings
 
     def write_ftl_file(self):
+        self.ftl_file_path.parent.mkdir(parents=True, exist_ok=True)
         strings = self.get_ftl_strings()
         with self.ftl_file_path.open('w') as ftl:
             for string_id, string_info in strings.items():
