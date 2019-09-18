@@ -10,15 +10,17 @@ from django.utils.functional import lazy, cached_property
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 from fluent.syntax.ast import GroupComment, Message
 
+from lib.l10n_utils import translation
 
 __all__ = [
     'fluent_l10n',
-    'get_metadata_file_path',
-    'has_any_messages',
-    'has_all_messages',
-    'translate',
     'ftl',
+    'ftl_file_is_active',
+    'ftl_has_messages',
     'ftl_lazy',
+    'get_metadata_file_path',
+    'has_messages',
+    'translate',
 ]
 cache = caches['l10n']
 
@@ -114,6 +116,17 @@ def memoize(f):
     return inner
 
 
+def l10nize(f):
+    """Decorator to create and pass in the l10n object"""
+    @wraps(f)
+    def inner(ftl_files, *args, **kwargs):
+        locale = kwargs.get('locale') or translation.get_language(True)
+        l10n = fluent_l10n([locale, 'en'], ftl_files)
+        return f(l10n, *args, **kwargs)
+
+    return inner
+
+
 @memoize
 def get_active_locales(ftl_file):
     metadata_file = get_metadata_file_path(ftl_file)
@@ -124,6 +137,12 @@ def get_active_locales(ftl_file):
             locales.extend(metadata['active_locales'])
 
     return locales
+
+
+def ftl_file_is_active(ftl_file, locale=None):
+    """Return True if the given FTL file is active in the given locale."""
+    locale = locale or translation.get_language(True)
+    return locale in get_active_locales(ftl_file)
 
 
 @memoize
@@ -139,16 +158,9 @@ def fluent_l10n(locales, files):
 
 
 @memoize
-def _has_messages(l10n, message_ids):
-    return [l10n.has_message(mid) for mid in message_ids]
-
-
-def has_all_messages(l10n, message_ids):
-    return all(_has_messages(l10n, message_ids))
-
-
-def has_any_messages(l10n, message_ids):
-    return any(_has_messages(l10n, message_ids))
+def ftl_has_messages(l10n, message_ids, require_all=True):
+    test = all if require_all else any
+    return test([l10n.has_message(mid) for mid in message_ids])
 
 
 @memoize
@@ -160,7 +172,11 @@ def translate(l10n, message_id, fallback=None, **kwargs):
     return l10n.format_value(message_id, kwargs)
 
 
-# alias for use in views
-ftl = translate
+# View Utils
+
+# for use in python views
+has_messages = l10nize(ftl_has_messages)
+ftl = l10nize(translate)
+
 # for use in python outside of a view
-ftl_lazy = lazy(translate, str)
+ftl_lazy = lazy(ftl, str)
