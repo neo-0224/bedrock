@@ -14,7 +14,7 @@ from lib.l10n_utils.extract import tweak_message
 from lib.l10n_utils.utils import get_ftl_file_data
 
 
-GETTEXT_RE = re.compile(r'{{\s*_\([\'"]([^|]+)[\'"]\)')
+GETTEXT_RE = re.compile(r'\b_\([\'"]([^)]+)[\'"]\)')
 FORMAT_RE = re.compile(r'\)\s*\|\s*format\(')
 
 
@@ -68,7 +68,7 @@ class Command(BaseCommand):
         str_hash = md5(str_id.encode()).hexdigest()
         ftl_id = ftl_data.get(str_hash)
         if ftl_id:
-            return f"{{{{ ftl('{ftl_id}')"
+            return f"ftl('{ftl_id}')"
 
         return match.group(0)
 
