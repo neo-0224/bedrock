@@ -130,6 +130,19 @@ class Command(BaseCommand):
 
         self.stdout.write(f'Recorded active translations in {self.metadata_path}')
 
+    def write_default_file(self):
+        en_file_path = self.file_path
+        dest_file_path = self.file_path.relative_to(settings.FLUENT_LOCAL_PATH)
+        dest_file_path = settings.FLUENT_REPO_PATH.joinpath(dest_file_path)
+        if not dest_file_path.exists():
+            dest_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with en_file_path.open() as enf:
+            lines = [l for l in enf if not l.startswith('# LANG_ID_HASH')]
+
+        with dest_file_path.open('w') as dfp:
+            dfp.writelines(lines)
+
     def handle(self, *args, **options):
         self.filename = options['filename']
         self.force = options['force']
@@ -139,4 +152,5 @@ class Command(BaseCommand):
         call_command('l10n_update', quiet=options['quiet'])
         self.record_active_translations()
         self.write_ftl_translations()
+        self.write_default_file()
         self.stdout.write('Done')
