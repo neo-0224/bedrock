@@ -60,7 +60,8 @@ class Command(BaseCommand):
     @property
     def filename_prefix(self):
         """Return a slugified version of the .lang filename for use as a FTL string ID prefix"""
-        return Path(self.filename).stem
+        prefix = slugify(Path(self.filename).stem)
+        return prefix.replace('-', '_')
 
     @property
     def ftl_file_path(self):
