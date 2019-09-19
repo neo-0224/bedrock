@@ -3,6 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
+from django.test import override_settings
 from io import StringIO
 from hashlib import md5
 from pathlib import Path
@@ -115,8 +116,9 @@ class Command(BaseCommand):
         if not wrote_all:
             self.stdout.write('Did not modify existing files. Use --force to overwrite.')
 
+    @override_settings(DEV=False)
     def record_active_translations(self):
-        translations = get_translations_for_langfile(self.lang_file_path)
+        translations = get_translations_for_langfile(self.lang_file_path.with_suffix(''))
         if self.metadata_path.exists():
             with self.metadata_path.open() as mdf:
                 data = json.load(mdf)

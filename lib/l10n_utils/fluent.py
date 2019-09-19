@@ -130,13 +130,13 @@ def l10nize(f):
 @memoize
 def get_active_locales(ftl_file):
     metadata_file = get_metadata_file_path(ftl_file)
-    locales = [settings.LANGUAGE_CODE]
+    locales = {settings.LANGUAGE_CODE}
     if metadata_file.exists():
         with metadata_file.open() as mf:
             metadata = json.load(mf)
-            locales.extend(metadata['active_locales'])
+            locales.update(metadata['active_locales'])
 
-    return locales
+    return sorted(locales)
 
 
 def ftl_file_is_active(ftl_file, locale=None):
