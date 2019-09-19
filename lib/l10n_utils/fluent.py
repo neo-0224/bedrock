@@ -25,10 +25,6 @@ __all__ = [
 cache = caches['l10n']
 
 
-def get_metadata_file_path(ftl_file):
-    return settings.FLUENT_REPO_PATH.joinpath('metadata', ftl_file).with_suffix('.json')
-
-
 class FluentL10n(FluentLocalization):
     def _localized_bundles(self):
         for bundle in self._bundles():
@@ -127,14 +123,28 @@ def l10nize(f):
     return inner
 
 
+def get_metadata_file_path(ftl_file):
+    return settings.FLUENT_REPO_PATH.joinpath('metadata', ftl_file).with_suffix('.json')
+
+
+def get_metadata(ftl_file):
+    path = get_metadata_file_path(ftl_file)
+    try:
+        with path.open() as mdf:
+            return json.load(mdf)
+    except (IOError, ValueError):
+        return {}
+
+
 @memoize
 def get_active_locales(ftl_file):
-    metadata_file = get_metadata_file_path(ftl_file)
     locales = {settings.LANGUAGE_CODE}
-    if metadata_file.exists():
-        with metadata_file.open() as mf:
-            metadata = json.load(mf)
-            locales.update(metadata['active_locales'])
+    metadata = get_metadata(ftl_file)
+    if metadata and 'active_locales' in metadata:
+        locales.update(metadata['active_locales'])
+        i_locales = metadata.get('inactive_locales')
+        if i_locales:
+            locales.difference_update(i_locales)
 
     return sorted(locales)
 

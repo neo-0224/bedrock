@@ -58,6 +58,21 @@ class Command(BaseCommand):
         return get_metadata_file_path(self.filename)
 
     @property
+    def metadata(self):
+        try:
+            with self.metadata_path.open() as mdf:
+                return json.load(mdf)
+        except (IOError, ValueError):
+            return {}
+
+    def write_metadata(self, data):
+        if not self.metadata_path.exists():
+            self.metadata_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with self.metadata_path.open('w') as mdf:
+            json.dump(data, mdf)
+
+    @property
     def lang_file_path(self):
         return Path(self.filename).with_suffix('.lang')
 
@@ -119,17 +134,9 @@ class Command(BaseCommand):
     @override_settings(DEV=False)
     def record_active_translations(self):
         translations = get_translations_for_langfile(self.lang_file_path.with_suffix(''))
-        if self.metadata_path.exists():
-            with self.metadata_path.open() as mdf:
-                data = json.load(mdf)
-        else:
-            data = {}
-            self.metadata_path.parent.mkdir(parents=True, exist_ok=True)
-
+        data = self.metadata
         data['active_locales'] = translations
-        with self.metadata_path.open('w') as mdf:
-            json.dump(data, mdf)
-
+        self.write_metadata(data)
         self.stdout.write(f'Recorded active translations in {self.metadata_path}')
 
     def write_default_file(self):
