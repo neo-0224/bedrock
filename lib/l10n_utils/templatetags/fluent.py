@@ -10,15 +10,20 @@ from lib.l10n_utils import fluent
 
 @library.global_function
 @jinja2.contextfunction
-def ftl(ctx, message_id, fallback=None, **args):
+def ftl(ctx, message_id, fallback=None, **kwargs):
     """Return the translated string.
 
-    :param ctx: the context from the template
-    :param message_id: the ID of the message
-    :param fallback: the ID of a message to use if message_id is not translated
-    :param args: the other args are passed to the translation as variables
+    :param ctx: the context from the template (automatically included)
+    :param str message_id: the ID of the message
+    :param str fallback: the ID of a message to use if message_id is not translated
+    :param kwargs: the other kwargs are passed to the translation as variables
+    :return: the translated string marked as safe
+
+    Usage example::
+
+        <p>{{ ftl('greeting', name='The Dude') }}
     """
-    return jinja2.Markup(fluent.translate(ctx['fluent_l10n'], message_id, fallback, **args))
+    return jinja2.Markup(fluent.translate(ctx['fluent_l10n'], message_id, fallback, **kwargs))
 
 
 @library.global_function

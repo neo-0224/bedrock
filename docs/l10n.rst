@@ -109,8 +109,8 @@ above .ftl file for a simple Jinja template example:
 
 .. _Fluent file syntax: https://projectfluent.org/fluent/guide/
 
-The ftl template helper function
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The ``ftl`` template helper function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ftl()`` function takes a string ID and returns the string in the current language,
 or simplified english if the string isn't translated. If you'd like to use a different
@@ -140,8 +140,8 @@ You could use that in a template like this:
 For our purposes these are mostly useful for things that can change, but which shouldn't involve
 retranslation of a string (e.g. URLs or email addresses).
 
-The ftl_has_messages helper function
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The ``ftl_has_messages`` helper function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Another useful template too is the ``ftl_has_messages()`` function. You pass it any number
 of string IDs and it will return ``True`` only if all of those message IDs exist in the current
@@ -163,6 +163,91 @@ instead of requiring all of them, you can pass the optional ``require_all=False`
 it will do just that.
 
 .. _fluent variables: https://projectfluent.org/fluent/guide/variables.html
+
+Specifying Fluent files
+-----------------------
+
+You have to tell the system which Fluent files to use for a particular template or view.
+This is done in either the ``page()`` helper in a ``urls.py`` file, or in the call
+to ``l10n_utils.render()`` in a view.
+
+Using the ``page()`` function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you just need to render a template, which is quite common for bedrock, you will probably
+just add a line like the following to your ``urls.py`` file:
+
+.. code-block:: python
+
+    urlpatterns = [
+        page('about', 'about.html'),
+        page('about/contact', 'about/contact.html'),
+    ]
+
+To tell this page to use the Fluent framework for l10n you just need to tell it which file(s)
+to use:
+
+.. code-block:: python
+
+    urlpatterns = [
+        page('about', 'about.html', ftl_files='about'),
+        page('about/contact', 'about/contact.html', ftl_files=['about/contact', 'about']),
+    ]
+
+The system uses the first (or only) file in the list to determine which locales are active for that
+URL. You can pass a string or list of strings to the ``ftl_files`` argument. The files you specify
+can include the ``.ftl`` extension or not, and they will be combined with the list of default files
+which contain strings for global elements like navigation and footer. There will also be files for
+reusable widgets like the newsletter form, but those should always come last in the list.
+
+Using the class-based view
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Bedrock includes a generic class-based view (CBV) that sets up l10n for you. If you need to do anything fancier
+than just render the page, then you can use this:
+
+.. code-block:: python
+
+    from lib.l10n_utils import L10nTemplateView
+
+    class AboutView(L10nTemplateView):
+        template_name = 'about.html'
+        ftl_files = ['about']
+
+Using that CBV will do the right things for l10n, and then you can override other useful methods
+(e.g. ``get_context_data``) to do what you need. Also, if you do need to do anything fancy with
+the context, and you find that you need to dynamically set the fluent files list, you can easily do
+so by setting ``ftl_files`` in the context instead of the class attribute.
+
+.. code-block:: python
+
+    from lib.l10n_utils import L10nTemplateView
+
+    class AboutView(L10nTemplateView):
+        template_name = 'about.html'
+
+        def get_context_data(self, **kwargs):
+            ctx = super().get_context_data(**kwargs)
+            ftl_files = ['about']
+            if request.GET.get('fancy'):
+                ftl_files.append('fancy')
+
+            ctx['ftl_files'] = ftl_files
+            return ctx
+
+Using in a view function
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Lastly there's the good old function views. These should use ``l10n_utils.render`` directly to render
+the template with the context. You can use the ``ftl_files`` argument with this function as well.
+
+.. code-block:: python
+
+    from lib.l10n_utils import render
+
+    def about_view(request):
+        render(request, 'about.html', {'name': 'Duder'}, ftl_files='about')
+
 
 Legacy
 ======

@@ -50,6 +50,7 @@ def render(request, template, context=None, ftl_files=None, **kwargs):
     # be different on the next call to the view.
     context = context.copy() if context else {}
     l10n = None
+    ftl_files = ftl_files or context.get('ftl_files')
 
     # Make sure we have a single template
     if isinstance(template, list):
@@ -179,6 +180,7 @@ class LangFilesMixin:
     """Generic views mixin that uses l10n_utils to render responses."""
     active_locales = None
     add_active_locales = None
+    ftl_files = None
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -191,7 +193,7 @@ class LangFilesMixin:
 
     def render_to_response(self, context, **response_kwargs):
         return render(self.request, self.get_template_names(),
-                      context, **response_kwargs)
+                      context, ftl_files=self.ftl_files, **response_kwargs)
 
 
 class L10nTemplateView(LangFilesMixin, TemplateView):
