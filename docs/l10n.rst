@@ -9,7 +9,7 @@ Localization
 ============
 
 The site is fully localizable. Localization files are not shipped with the code
-distribution, but are available in a separate GitHub repository. The proper repo
+distribution, but are available in separate GitHub repositories. The proper repos
 can be cloned and kept up-to-date using the ``l10n_update`` management command:
 
 .. code-block:: console
@@ -17,9 +17,158 @@ can be cloned and kept up-to-date using the ``l10n_update`` management command:
     $ ./manage.py l10n_update
 
 If you don't already have a ``locale`` directory, this command will clone the
-git repo containing the translation files (either the dev or prod files
+git repo containing the .lang translation files (either the dev or prod files
 depending on your ``DEV`` setting). If the folder is already present, it will
-update the repository to the latest version.
+update the repository to the latest version. It do the same thing for the
+repository for the .ftl translation files in ``git-repos/www-l10n`` directory.
+
+Fluent
+======
+
+Bedrock's Localization (l10n) system is based on `Project Fluent`_. This is a
+departure from the legacy system (see below) that relied on a gettext work flow
+of string extraction from template and code files, in that it relies on developers
+directly editing the default language (English in our case) Fluent files and using
+the string IDs created there in their templates and views.
+
+The default files for the Fluent system live in the ``l10n`` directory in the root
+of the bedrock project. This directory houses directories for each locale the developers
+directly implement (mostly simplified English "en", and "en-US"). The simplified English
+files are the default fallback for every string ID on the site and should be strings that
+are plain and easy to understand English, as free from colloquialisms as possible. The
+translators are able to easily understand the meaning of the string, and can then add their
+own local flair to the ideas.
+
+.. note::
+
+    We have some :ref:`fluent tools <fluent>` to aid in the transition from the legacy system.
+
+.. _Project Fluent: https://projectfluent.org/
+
+.ftl files
+----------
+
+When adding translatable strings to the site you start by putting them all into an .ftl
+file in the ``l10n/en/`` directory with a path that matches or is somehow meaningful
+for the expected location of the template or view in which they'll be used. For example,
+strings for the ``mozorg/mission.html`` template would go into the ``l10n/en/mozorg/mission.ftl``
+file. Locales are activated for a particular .ftl file, not template or URL, so you should use
+a unique file for most URLs, unless they're meant to be translated and activated for new locales
+simultaneously.
+
+You can have shared .ftl files that you can load into any template render, but only the first
+.ftl file in the list of the ones for a page render will determine whether the page is active
+for a locale.
+
+Activation of a locale happens automatically once certain rules are met. A developer can mark
+some string IDs as being "Required", which means that the file won't be activated for a locale
+until that locale has translated all of those required strings. The other rule is a percentage
+completion rule: a certain percentage (configurable) of the strings IDs in the "en" file must
+be translated in the file for a locale before it will be marked as active. We'll get into how
+exactly this works later.
+
+Translating with .ftl files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `Fluent file syntax`_ is well document on the Fluent Project's site. We use "double hash" or
+"group" comments to indicate strings required for activation. A group comment only ends when
+another group comment starts however, so you should either group your required strings at the
+bottom of a file, or also have a "not required" group comment. Here's an example:
+
+.. code-block:: fluent
+
+    ## Required
+    page_title = The Page Title
+    page_desc = This page is a test.
+
+    ## Not required
+    page_footer = This string isn't as important
+
+
+Any group comment (a comment that starts with "##") that starts with "Required" (case does not
+matter) will start a required strings block, and any other group comment will end it.
+
+Once you have your strings in your .ftl file you can place them in your template. We'll use the
+above .ftl file for a simple Jinja template example:
+
+.. code-block:: jinja
+
+    <!doctype html>
+    <html>
+    <head>
+        <title>{{ ftl('page_title') }}</title>
+    </head>
+    <body>
+        <h1>{{ ftl('page_title') }}</h1>
+        <p>{{ ftl('page_desc') }}</p>
+        <footer>
+            <p>{{ ftl('page_footer') }}</p>
+        </footer>
+    </body>
+    </html>
+
+.. _Fluent file syntax: https://projectfluent.org/fluent/guide/
+
+The ftl template helper function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``ftl()`` function takes a string ID and returns the string in the current language,
+or simplified english if the string isn't translated. If you'd like to use a different
+string ID in the case that the primary one isn't translated you can specify that like this:
+
+.. code-block:: python
+
+    ftl('primary_string_id', fallback='fallback_string_id')
+
+When a fallback is specified it will be used only if the primary isn't translated in the current
+locale. English locales (e.g. en-US, en-GB) will never use the fallback and will print the simplified
+english version of the primary string if not overridden in the more specific locale.
+
+You can also pass in replacement variables into the ``ftl()`` function for use with `fluent variables`_.
+If you had a variable in your fluent file like this:
+
+.. code-block:: fluent
+
+    welcome = Welcome, { $user }!
+
+You could use that in a template like this:
+
+.. code-block:: jinja
+
+    <h2>{{ ftl('welcome', user='Dude') }}<h2>
+
+For our purposes these are mostly useful for things that can change, but which shouldn't involve
+retranslation of a string (e.g. URLs or email addresses).
+
+The ftl_has_messages helper function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Another useful template too is the ``ftl_has_messages()`` function. You pass it any number
+of string IDs and it will return ``True`` only if all of those message IDs exist in the current
+translation. This is useful when you want to add a new block of HTML to a page that is already
+translated, but don't want it to appear untranslated on any page.
+
+.. code-block:: jinja
+
+    {% if ftl_has_messages('new_title', 'new_description') %}
+      <h3>{{ ftl('new_title') }}</h3>
+      <p>{{ ftl('new_description') }}</p>
+    {% else %}
+      <h3>{{ ftl('title') }}</h3>
+      <p>{{ ftl('description') }}</p>
+    {% endif %}
+
+If you'd like to have it return true when any of the given message IDs exist in the translation
+instead of requiring all of them, you can pass the optional ``require_all=False`` parameter and
+it will do just that.
+
+.. _fluent variables: https://projectfluent.org/fluent/guide/variables.html
+
+Legacy
+======
+
+This section describes the legacy l10n system based on .lang files, which will
+be frozen and no longer supported for new translations in January of 2020.
 
 .lang files
 -----------
