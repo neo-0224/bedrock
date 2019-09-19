@@ -35,10 +35,10 @@ cache = caches['l10n']
 
 def _replace_variables(match):
     var_name = match[2]
-    if var_name:
-        return f'{{ ${var_name} }}'
+    if not var_name:
+        var_name = 'VARIABLE_MISSING'
 
-    return match[0]
+    return f'{{ ${var_name} }}'
 
 
 def convert_variables(lang_str):

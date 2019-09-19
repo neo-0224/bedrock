@@ -87,7 +87,7 @@ class Command(BaseCommand):
 
             return new_str
 
-        print(f'NO MATCH: {str_id}')
+        self.stderr.write(f'NO MATCH: {str_id}')
         return match[0]
 
     def ftl_template_lines(self):

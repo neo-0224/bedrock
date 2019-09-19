@@ -79,9 +79,18 @@ class Command(BaseCommand):
         all_strings = {}
         for str_id, string in translations.items():
             comment, string = string
+            if comment and comment.startswith('TAG:'):
+                # ignore tag comments
+                comment = None
+
             if '%s' in string:
                 self.stderr.write('WARNING: Place-holder with no variable name found in string. '
-                                  'Convert "%s" to a Fluent variable in the new file.')
+                                  'Look for "$VARIABLE_MISSING" in the new file.')
+            # percent symbols are doubled in lang file strings
+            # no need for this in ftl files
+            # also breaks string matching in templates
+            string = string.replace('%%', '%')
+            str_id = str_id.replace('%%', '%')
             ftl_id = self.get_ftl_id(str_id)
             # make sure it's unique
             if ftl_id in all_strings:
