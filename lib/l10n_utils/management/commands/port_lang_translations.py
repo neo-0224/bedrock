@@ -70,7 +70,7 @@ class Command(BaseCommand):
             self.metadata_path.parent.mkdir(parents=True, exist_ok=True)
 
         with self.metadata_path.open('w') as mdf:
-            json.dump(data, mdf)
+            json.dump(data, mdf, indent=2, sort_keys=True)
 
     @property
     def lang_file_path(self):
@@ -114,11 +114,19 @@ class Command(BaseCommand):
             all_strings = {}
             for str_id, string in translation.items():
                 comment, string = string
+                if comment and comment.startswith('TAG:'):
+                    # ignore tag comments
+                    comment = None
                 ftl_id = self.get_ftl_id(str_id)
-                all_strings[ftl_id] = {
-                    'string': convert_variables(string),
-                    'comment': comment,
-                }
+                if ftl_id:
+                    all_strings[ftl_id] = {
+                        'string': convert_variables(string),
+                        'comment': comment,
+                    }
+                else:
+                    relative_path = path.relative_to(settings.LOCALES_PATH)
+                    self.stderr.write(f'WARNING: Could not find a match for "{str_id}"\n'
+                                      f'in {relative_path}')
 
             wrote = self.write_ftl_file(path, all_strings)
             if not wrote:
