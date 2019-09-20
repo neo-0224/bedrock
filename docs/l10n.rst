@@ -248,6 +248,58 @@ the template with the context. You can use the ``ftl_files`` argument with this 
     def about_view(request):
         render(request, 'about.html', {'name': 'Duder'}, ftl_files='about')
 
+Fluent File Activation
+----------------------
+
+Fluent files are activated automatically when processed from the l10n team's repo
+into our own based on a couple of rules.
+
+1. If a fluent file has a group of required strings, all of those strings must be present in
+   the translation in order for it to be activated.
+2. A translation must contain a minimum percent of the string IDs from the English file to be activated.
+
+If both of these conditions are met the locale is activated for that particular Fluent file. Any view
+using that file as its primary (first in the list) file will be available in that locale.
+
+Deactivation
+~~~~~~~~~~~~
+
+If the automated system activates a locale but we for some reason need to ensure that this page remains
+unavailable in that locale, we can add this locale to a list of deactivated locales in the metadata file
+for that FTL file. For example, say we needed to make sure that the `mozorg/mission.ftl` file remained
+inactive for German, even though the translation is already done. We would add ``de`` to the ``inactive_locales``
+list in the ``metadata/mozorg/mission.json`` file:
+
+.. code-block:: json
+
+    {
+      "active_locales": [
+        "de",
+        "fr",
+        "en-GB",
+        "en-US",
+      ],
+      "inactive_locales": [
+        "de"
+      ],
+      "percent_required": 85
+    }
+
+This would ensure that even though ``de`` appears in both lists, it will remain deactivated on the site. We
+could just remove it from the active list, but automation would keep attempting to add it back, so for now
+this is the best solution we have, and is an indication of the full list of locales that have satisfied the rules.
+
+Alternate Rules
+~~~~~~~~~~~~~~~
+
+It's also possible to change the percentage of string completion required for activation on a per-file basis. In
+the same metadata file as above, if a ``percent_required`` key exists in the JSON data (see above) it will be used
+as the minimum percent of string completion required for that file in order to activate new locales.
+
+.. note::
+
+    Once a locale is activated for a Fluent file it will **NOT** be automatically deactivated, even if the
+    rules change. If you need to deactivate a locale you should follow the `Deactivation`_ instructions.
 
 Legacy
 ======
@@ -669,11 +721,14 @@ When using ``l10n_has_tag``, be sure to coordinate with the localization team to
 decide on a good tag name. Always use underscores instead of hyphens if you need
 to visually separate words.
 
+All
+===
+
 Locale-specific Templates
 -------------------------
 
-While the ``l10n_has_tag`` template function is great in small doses, it doesn't
-scale particularly well. A template filled with conditional copy can be
+While the ``l10n_has_tag`` or ``ftl_has_messages`` template functions are great in small doses,
+they don't scale particularly well. A template filled with conditional copy can be
 difficult to comprehend, particularly when the conditional copy has associated
 CSS and/or JavaScript.
 
