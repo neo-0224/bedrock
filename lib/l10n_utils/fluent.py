@@ -161,7 +161,7 @@ def fluent_l10n(locales, files):
         locales = [locales]
 
     # file IDs may not have file extension
-    files = [f'{f}.ftl' for f in files if not f.endswith('.ftl')]
+    files = [f'{f}.ftl' if not f.endswith('.ftl') else f for f in files]
     paths = [f'{path}/{{locale}}/' for path in settings.FLUENT_PATHS]
     loader = FluentResourceLoader(paths)
     return FluentL10n(locales, files, loader)
