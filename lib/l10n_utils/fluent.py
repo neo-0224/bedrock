@@ -32,20 +32,20 @@ class FluentL10n(FluentLocalization):
                 yield bundle
 
     @cached_property
-    def _messages(self):
-        messages = {}
+    def _message_ids(self):
+        messages = set()
         for bundle in self._bundles():
-            messages.update(bundle._messages)
+            messages.update(bundle._messages.keys())
 
-        return messages
+        return list(messages)
 
     @cached_property
-    def _localized_messages(self):
-        messages = {}
+    def _localized_message_ids(self):
+        messages = set()
         for bundle in self._localized_bundles():
-            messages.update(bundle._messages)
+            messages.update(bundle._messages.keys())
 
-        return messages
+        return list(messages)
 
     @cached_property
     def required_message_ids(self):
@@ -82,14 +82,14 @@ class FluentL10n(FluentLocalization):
 
     @cached_property
     def percent_translated(self):
-        return (float(len(self._localized_messages)) / float(len(self._messages))) * 100
+        return (float(len(self._localized_message_ids)) / float(len(self._message_ids))) * 100
 
     def has_message(self, message_id):
         # assume English locales have the message
         if self.locales[0].startswith('en-'):
             return True
 
-        return message_id in self._localized_messages
+        return message_id in self._localized_message_ids
 
 
 def _cache_key(*args, **kwargs):

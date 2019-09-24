@@ -34,8 +34,8 @@ class TestFluentL10n(TestCase):
 
     def test_localized_messages(self):
         l10n = get_l10n()
-        assert len(l10n._localized_messages) == 3
-        assert 'brand-new-string' not in l10n._localized_messages
+        assert len(l10n._localized_message_ids) == 3
+        assert 'brand-new-string' not in l10n._localized_message_ids
 
     def test_has_message(self):
         l10n = get_l10n()
