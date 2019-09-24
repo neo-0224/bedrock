@@ -58,7 +58,7 @@ with a ``_ftl.html`` suffix instead of overwriting the old one so that you can c
 removing the old one. You can then either delete the old one and rename the new one with the original
 name, or keep them both for a while if you may need to quickly switch back. You then need to specify
 which .ftl file to use by passing it (or them) to the ``l10n_utils.render`` function in the view,
-or the ``page()`` function in urls.py.
+or the ``page()`` function in urls.py. See the :ref:`specifying_fluent_files` section for more details.
 
 .. code-block:: python
 
@@ -66,6 +66,10 @@ or the ``page()`` function in urls.py.
     urlpatterns = [
         page('mission', 'mozorg/mission.html', ftl_files=['mozorg/mission']),
     ]
+
+    # views.py
+    def mission_view(request):
+        return l10n_utils.render(request, 'mozorg/mission.html', ftl_files=['mozorg/mission'])
 
 .. note::
 

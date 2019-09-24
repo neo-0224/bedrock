@@ -232,7 +232,7 @@ LANGUAGE_URL_MAP = lazy(lazy_lang_url_map, dict)()
 LANGUAGES = lazy(lazy_langs, dict)()
 
 FEED_CACHE = 3900
-DOTLANG_CACHE = config('L10N_CACHE_TIMEOUT', default='600', parser=int)
+DOTLANG_CACHE = config('L10N_CACHE_TIMEOUT', default='2' if DEBUG else '600', parser=int)
 
 DOTLANG_FILES = ['navigation', 'download_button', 'main']
 

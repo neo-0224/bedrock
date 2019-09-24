@@ -168,7 +168,7 @@ def fluent_l10n(locales, files):
 
 
 @memoize
-def ftl_has_messages(l10n, message_ids, require_all=True):
+def ftl_has_messages(l10n, *message_ids, require_all=True):
     test = all if require_all else any
     return test([l10n.has_message(mid) for mid in message_ids])
 

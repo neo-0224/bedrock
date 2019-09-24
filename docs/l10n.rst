@@ -77,12 +77,14 @@ bottom of a file, or also have a "not required" group comment. Here's an example
 
 .. code-block:: fluent
 
+    ### File for example.html
+
     ## Required
-    page_title = The Page Title
-    page_desc = This page is a test.
+    example_page_title = The Page Title
+    example_page_desc = This page is a test.
 
     ## Not required
-    page_footer = This string isn't as important
+    example_footer = This string isn't as important
 
 
 Any group comment (a comment that starts with "##") that starts with "Required" (case does not
@@ -96,21 +98,34 @@ above .ftl file for a simple Jinja template example:
     <!doctype html>
     <html>
     <head>
-        <title>{{ ftl('page_title') }}</title>
+        <title>{{ ftl('example_page_title') }}</title>
     </head>
     <body>
-        <h1>{{ ftl('page_title') }}</h1>
-        <p>{{ ftl('page_desc') }}</p>
+        <h1>{{ ftl('example_page_title') }}</h1>
+        <p>{{ ftl('example_page_desc') }}</p>
         <footer>
-            <p>{{ ftl('page_footer') }}</p>
+            <p>{{ ftl('example_footer') }}</p>
         </footer>
     </body>
     </html>
 
 .. _Fluent file syntax: https://projectfluent.org/fluent/guide/
 
-The ``ftl`` template helper function
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FTL String IDs
+~~~~~~~~~~~~~~
+
+Our convention for string ID creation is the following:
+
+1. String IDs should be all lower-case alphanumeric characters.
+2. Words should be separated with underscores.
+3. IDs should be prefixed with the name of the template file (e.g. ``firefox_new_skyline`` for ``firefox-new-skyline.html``)
+4. If you need to create a new string for the same place on a page and to transition to it as it is translated, you can
+   add a version suffix to the string ID: e.g. ``firefox_new_skyline_main_page_title_v2``.
+4. The ID should be as descriptive as possible to make sense to the developer, but could be anything as long as it adheres
+   to the rules above.
+
+The ``ftl`` helper function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ftl()`` function takes a string ID and returns the string in the current language,
 or simplified english if the string isn't translated. If you'd like to use a different
@@ -140,6 +155,23 @@ You could use that in a template like this:
 For our purposes these are mostly useful for things that can change, but which shouldn't involve
 retranslation of a string (e.g. URLs or email addresses).
 
+This helper is available in Jinja templates and Python code in views. For use in a view you should
+always call it in the view itself:
+
+.. code-block:: python
+
+    # views.py
+    from lib.l10n_utils import render
+    from lib.l10n_utils.fluent import ftl
+
+    def about_view(request):
+        hello_string = ftl('about_hello')
+        render(request, 'about.html', {'hello', hello_string}, ftl_files='about')
+
+If you need to use this string in a view, but define it outside of the view itself, you can use the
+``ftl_lazy`` variant which will delay evaluation until render time. This is mostly useful for defining
+messages shared among several views in constants in a ``views.py`` or ``models.py`` file.
+
 The ``ftl_has_messages`` helper function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -162,7 +194,28 @@ If you'd like to have it return true when any of the given message IDs exist in 
 instead of requiring all of them, you can pass the optional ``require_all=False`` parameter and
 it will do just that.
 
+There is a version of this function for use in views called ``has_messages``. It works exactly the
+same way but is meant to be used in the view Python code.
+
+.. code-block:: python
+
+    # views.py
+    from lib.l10n_utils import render
+    from lib.l10n_utils.fluent import ftl, has_messages
+
+    def about_view(request):
+        if has_messages('about_hello_v2', 'about_title_v2'):
+            hello_string = ftl('about_hello_v2')
+            title_string = ftl('about_title_v2')
+        else:
+            hello_string = ftl('about_hello')
+            title_string = ftl('about_title')
+
+        render(request, 'about.html', {'hello', hello_string, 'title': title_string}, ftl_files='about')
+
 .. _fluent variables: https://projectfluent.org/fluent/guide/variables.html
+
+.. _specifying_fluent_files:
 
 Specifying Fluent files
 -----------------------
@@ -300,6 +353,43 @@ as the minimum percent of string completion required for that file in order to a
 
     Once a locale is activated for a Fluent file it will **NOT** be automatically deactivated, even if the
     rules change. If you need to deactivate a locale you should follow the `Deactivation`_ instructions.
+
+
+Activation Status
+~~~~~~~~~~~~~~~~~
+
+You can determine and use the activation status of a Fluent file in a view to make some decisions; what
+template to render for example. The way you would do that is with the ``ftl_file_is_active`` function.
+For example:
+
+.. code-block:: python
+
+    # views.py
+    from lib.l10n_utils import L10nTemplateView
+    from lib.l10n_utils.fluent import ftl_file_is_active
+
+    # class-based view example
+    class AboutView(L10nTemplateView):
+        def get_template_names(self):
+            if ftl_file_is_active('about_new'):
+                template_name = 'about_new.html'
+                self.ftl_files = ['about_new', 'about']
+            else:
+                template_name = 'about.html'
+                self.ftl_files = ['about']
+
+            return [template_name]
+
+    # function view example
+    def about_view(request):
+        if ftl_file_is_active('about_new'):
+            template = 'about_new.html'
+            ftl_files = ['about_new', 'about']
+        else:
+            template = 'about.html'
+            ftl_files = ['about']
+
+        render(request, template, ftl_files=ftl_files)
 
 Legacy
 ======
