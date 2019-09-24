@@ -13,6 +13,7 @@
             client.getFirefoxDetails(function(data) {
                 if (data.isUpToDate) {
                     document.querySelector('.c-page-header').classList.add('is-up-to-date');
+                    document.documentElement.classList.add('is-up-to-date');
                 }
             });
         }

@@ -1,0 +1,97 @@
+{# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/. -#}
+
+{% from "macros.html" import monitor_button with context %}
+
+{% add_lang_files "firefox/whatsnew_70" %}
+
+{% extends "firefox/base/base-protocol.html" %}
+
+{% block page_title %}{{ _('What’s new with Firefox - More privacy, more protections.') }}{% endblock %}
+
+{% block page_css %}
+  {{ css_bundle('firefox_whatsnew_70') }}
+{% endblock %}
+
+{% block body_class %}state-fxa-default{% endblock %}
+
+{% block site_header %}{% endblock %}
+
+{% block content %}
+<main class="content-wrapper mzp-t-firefox mzp-t-dark">
+  <header class="c-page-header">
+    <div class="mzp-l-content c-page-header-inner">
+      {{ high_res_img('logos/firefox/logo-quantum-wordmark-white.png', {'alt': 'Firefox', 'width': '120', 'height': '40', 'class': 'c-page-header-logo-fx'}) }}
+      <div class="mzp-c-notification-bar mzp-t-success">
+        <p>{{ _('Congrats! You’re using the latest version of Firefox.') }}</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="content-main">
+    <div class="mzp-l-content">
+      <div class="mzp-c-box-emphasis">
+        <img class="c-emphasis-box-logo" src="{{ static('img/firefox/glyphs/tracking-protection.svg') }}" alt="">
+        <h2 class="c-emphasis-box-title">
+          {{ _('Now you can see how we’re protecting your privacy.') }}
+        </h2>
+        <p>{{ _('We made Enhanced Tracking Protection because no one should be able to follow you online without your permission. And now you can see just how many data-collecting trackers Firefox has blocked for you — along with other ways our products protect your privacy.') }}</p>
+
+        <!-- firefox 70+ -->
+        <button id="protection-cta" class="mzp-c-button mzp-t-product">{{ _('See what Firefox has blocked for you') }}</button>
+        <!-- firefox <70 -->
+        <a class="mzp-c-button mzp-t-product" href="https://support.mozilla.org/kb/update-firefox-latest-release">{{ _('Update your Firefox browser') }}</a>
+        <!-- non-fx -->
+        {{ download_firefox(alt_copy=_('Download the Firefox browser'), download_location='primary cta', button_color='mzp-c-button mzp-t-primary mzp-t-product') }}
+      </div>
+    </div>
+  </section>
+
+  <section class="content-extra">
+    <div class="mzp-l-content">
+      <h3 class="c-section-title-secondary">{{ _('Also view personalized protection updates from these services:') }}</h3>
+      <div class="l-columns-two">
+
+        <div class="c-picto-block">
+          <div class="c-picto-block-image">
+            <img src="{{ static('img/logos/firefox/logo-monitor.svg') }}" alt="">
+          </div>
+
+          <h3 class="c-picto-block-title">{{ _('Firefox Monitor') }}</h3>
+          <div class="c-picto-block-body">
+            <p>{{ _('See if you were a part of another company’s data breach, and sign up for future alerts.') }}</p>
+            <a class="mzp-c-cta-link" href="https://monitor.firefox.com/">{{ _('Go to Monitor') }}</a>
+          </div>
+        </div>
+
+        <div class="c-picto-block">
+          <div class="c-picto-block-image">
+            <img src="{{ static('img/logos/firefox/logo-lockwise.svg') }}" alt="">
+          </div>
+
+          <h3 class="c-picto-block-title">{{ _('Firefox Lockwise') }}</h3>
+          <div class="c-picto-block-body">
+            <p>{{ _('Safely store and manage your passwords with Lockwise, and get alerted when you need to change them.') }}</p>
+            <a class="mzp-c-cta-link" id="lockwise-cta-link" role="button">{{ _('Go to Lockwise') }}</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <aside class="mzp-l-content c-utilities">
+    <p>
+    {% trans notes=url('firefox.notes') %}
+      Read the <a href="{{ notes }}">Release Notes</a> to know more about what’s new in your Firefox Browser.
+    {% endtrans %}
+    </p>
+  </aside>
+
+</main>
+{% endblock %}
+
+{% block js %}
+  {{ js_bundle('firefox_whatsnew_70') }}
+{% endblock %}
