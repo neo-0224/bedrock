@@ -236,6 +236,7 @@ DOTLANG_CACHE = config('L10N_CACHE_TIMEOUT', default='600', parser=int)
 
 DOTLANG_FILES = ['navigation', 'download_button', 'main']
 
+# TODO create these files by porting from their .lang equivalents
 FLUENT_DEFAULT_FILES = ['navigation', 'footer', 'download_button']
 FLUENT_REPO = config('FLUENT_REPO', default='https://github.com/mozmeao/www-l10n')
 FLUENT_REPO_PATH = GIT_REPOS_PATH / 'www-l10n'

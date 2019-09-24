@@ -4,9 +4,9 @@
 
 .. _fluent:
 
-=================
-Fluent Conversion
-=================
+======================
+L10n Fluent Conversion
+======================
 
 There are some tools that exist now but are only useful during our conversion
 from .lang to .ftl files. This document will cover the usage of these.
