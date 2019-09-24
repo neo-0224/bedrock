@@ -79,10 +79,10 @@ class TestFluentTranslationUtils(TestCase):
 
     def test_has_all_messages(self):
         l10n = get_l10n()
-        assert fluent.ftl_has_messages(l10n, ['fluent-title', 'fluent-page-desc'])
-        assert not fluent.ftl_has_messages(l10n, ['fluent-title', 'fluent-page-desc', 'brand-new-string'])
+        assert fluent.ftl_has_messages(l10n, 'fluent-title', 'fluent-page-desc')
+        assert not fluent.ftl_has_messages(l10n, 'fluent-title', 'fluent-page-desc', 'brand-new-string')
 
     def test_has_any_messages(self):
         l10n = get_l10n()
-        assert fluent.ftl_has_messages(l10n, ['fluent-title', 'brand-new-string'], require_all=False)
-        assert not fluent.ftl_has_messages(l10n, ['brand-new-string'], require_all=False)
+        assert fluent.ftl_has_messages(l10n, 'fluent-title', 'brand-new-string', require_all=False)
+        assert not fluent.ftl_has_messages(l10n, 'brand-new-string', require_all=False)
