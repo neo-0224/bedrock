@@ -1,5 +1,7 @@
 ### The best file ever
 
+## These strings are the most important and are at the top
+##
 ## Required
 
 fluent-title = This is a test of the new Fluent L10n system

@@ -1,4 +1,5 @@
 import json
+import re
 from functools import wraps
 from hashlib import md5
 
@@ -23,6 +24,7 @@ __all__ = [
     'translate',
 ]
 cache = caches['l10n']
+REQUIRED_RE = re.compile(r'^required\b', re.MULTILINE | re.IGNORECASE)
 
 
 class FluentL10n(FluentLocalization):
@@ -60,7 +62,7 @@ class FluentL10n(FluentLocalization):
                 in_required = False
                 for item in resource.body:
                     if isinstance(item, GroupComment):
-                        in_required = item.content.lower().startswith('required')
+                        in_required = REQUIRED_RE.search(item.content)
                         continue
 
                     if isinstance(item, Message) and in_required:
