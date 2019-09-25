@@ -49,14 +49,15 @@ def get_l10n_path(path):
     /templates/foo.html -> foo
     /foo/bar.html -> foo/bar"""
 
-    p = path.split('/')
+    # filter empty path parts
+    parts = [p for p in path.split('/') if p]
 
     try:
-        i = p.index('templates')
-        p = p[i + 1:]
+        i = parts.index('templates')
+        parts = parts[i + 1:]
     except ValueError:
         pass
 
-    path = '/'.join(p)
+    path = '/'.join(parts)
     base, ext = os.path.splitext(path)
     return base

@@ -19,7 +19,7 @@ def string_to_ftl_id(string):
     slug_parts = slugify(string).split('-')
     slug = slug_parts.pop(0)
     for part in slug_parts:
-        slug = '_'.join([slug, part])
+        slug = '-'.join([slug, part])
         if len(slug) > 30:
             break
 
@@ -60,15 +60,14 @@ class Command(BaseCommand):
     @property
     def filename_prefix(self):
         """Return a slugified version of the .lang filename for use as a FTL string ID prefix"""
-        prefix = slugify(Path(self.filename).stem)
-        return prefix.replace('-', '_')
+        return slugify(Path(self.filename).stem)
 
     @property
     def ftl_file_path(self):
         return settings.FLUENT_LOCAL_PATH.joinpath('en', self.filename).with_suffix('.ftl')
 
     def get_ftl_id(self, string):
-        return '_'.join([self.filename_prefix, string_to_ftl_id(string)])
+        return '-'.join([self.filename_prefix, string_to_ftl_id(string)])
 
     def get_translations(self):
         path = settings.LOCALES_PATH.joinpath('en-US', self.filename)

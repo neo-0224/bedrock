@@ -3,12 +3,12 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import re
-from django.utils.functional import cached_property
 from hashlib import md5
 from io import StringIO
 from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
+from django.utils.functional import cached_property
 
 from lib.l10n_utils.extract import tweak_message
 from lib.l10n_utils.utils import get_ftl_file_data

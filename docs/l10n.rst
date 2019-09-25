@@ -98,13 +98,13 @@ above .ftl file for a simple Jinja template example:
     <!doctype html>
     <html>
     <head>
-        <title>{{ ftl('example_page_title') }}</title>
+        <title>{{ ftl('example-page-title') }}</title>
     </head>
     <body>
-        <h1>{{ ftl('example_page_title') }}</h1>
-        <p>{{ ftl('example_page_desc') }}</p>
+        <h1>{{ ftl('example-page-title') }}</h1>
+        <p>{{ ftl('example-page-desc') }}</p>
         <footer>
-            <p>{{ ftl('example_footer') }}</p>
+            <p>{{ ftl('example-footer') }}</p>
         </footer>
     </body>
     </html>
@@ -117,10 +117,10 @@ FTL String IDs
 Our convention for string ID creation is the following:
 
 1. String IDs should be all lower-case alphanumeric characters.
-2. Words should be separated with underscores.
-3. IDs should be prefixed with the name of the template file (e.g. ``firefox_new_skyline`` for ``firefox-new-skyline.html``)
+2. Words should be separated with hyphens.
+3. IDs should be prefixed with the name of the template file (e.g. ``firefox-new-skyline`` for ``firefox-new-skyline.html``)
 4. If you need to create a new string for the same place on a page and to transition to it as it is translated, you can
-   add a version suffix to the string ID: e.g. ``firefox_new_skyline_main_page_title_v2``.
+   add a version suffix to the string ID: e.g. ``firefox-new-skyline-main-page-title-v2``.
 4. The ID should be as descriptive as possible to make sense to the developer, but could be anything as long as it adheres
    to the rules above.
 
@@ -133,7 +133,7 @@ string ID in the case that the primary one isn't translated you can specify that
 
 .. code-block:: python
 
-    ftl('primary_string_id', fallback='fallback_string_id')
+    ftl('primary-string-id', fallback='fallback-string-id')
 
 When a fallback is specified it will be used only if the primary isn't translated in the current
 locale. English locales (e.g. en-US, en-GB) will never use the fallback and will print the simplified
@@ -165,8 +165,8 @@ always call it in the view itself:
     from lib.l10n_utils.fluent import ftl
 
     def about_view(request):
-        hello_string = ftl('about_hello')
-        render(request, 'about.html', {'hello', hello_string}, ftl_files='about')
+        hello_string = ftl('about-hello')
+        render(request, 'about.html', {'hello': hello_string}, ftl_files='about')
 
 If you need to use this string in a view, but define it outside of the view itself, you can use the
 ``ftl_lazy`` variant which will delay evaluation until render time. This is mostly useful for defining
@@ -182,9 +182,9 @@ translated, but don't want it to appear untranslated on any page.
 
 .. code-block:: jinja
 
-    {% if ftl_has_messages('new_title', 'new_description') %}
-      <h3>{{ ftl('new_title') }}</h3>
-      <p>{{ ftl('new_description') }}</p>
+    {% if ftl_has_messages('new-title', 'new-description') %}
+      <h3>{{ ftl('new-title') }}</h3>
+      <p>{{ ftl('new-description') }}</p>
     {% else %}
       <h3>{{ ftl('title') }}</h3>
       <p>{{ ftl('description') }}</p>
@@ -204,14 +204,14 @@ same way but is meant to be used in the view Python code.
     from lib.l10n_utils.fluent import ftl, has_messages
 
     def about_view(request):
-        if has_messages('about_hello_v2', 'about_title_v2'):
-            hello_string = ftl('about_hello_v2')
-            title_string = ftl('about_title_v2')
+        if has_messages('about-hello-v2', 'about-title-v2'):
+            hello_string = ftl('about-hello-v2')
+            title_string = ftl('about-title-v2')
         else:
-            hello_string = ftl('about_hello')
-            title_string = ftl('about_title')
+            hello_string = ftl('about-hello')
+            title_string = ftl('about-title')
 
-        render(request, 'about.html', {'hello', hello_string, 'title': title_string}, ftl_files='about')
+        render(request, 'about.html', {'hello': hello_string, 'title': title_string}, ftl_files='about')
 
 .. _fluent variables: https://projectfluent.org/fluent/guide/variables.html
 
