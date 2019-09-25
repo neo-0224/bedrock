@@ -391,6 +391,34 @@ For example:
 
         render(request, template, ftl_files=ftl_files)
 
+Active Locales
+~~~~~~~~~~~~~~
+
+To see which locales are active for a particular .ftl file you can either look in
+the metadata file for that .ftl file, which is the one with the same path but in
+the ``metadata`` folder instead of a locale folder in the www-l10n repository. Or
+if you'd like something a bit nicer looking and more convenient there is the
+``active_locales`` management command:
+
+.. code-block:: bash
+
+    $ ./manage.py l10n_update
+    $ ./manage.py active_locales mozorg/mission
+    There are 91 active locales for mozorg/mission.ftl:
+    - af
+    - an
+    - ar
+    - ast
+    - az
+    - be
+    - bg
+    - bn
+    ...
+
+You get an alphabetically sorted list of all of the active locales for that .ftl file.
+You should run ``./manage.py l10n_update`` as shown above for the most accurate and
+up-to-date results.
+
 Legacy
 ======
 
@@ -563,7 +591,7 @@ This file's strings would be extracted to `foo.lang`, and the lang files
 searched for matches in that order.
 
 l10n blocks
-------------------
+-----------
 
 Bedrock also has a block-based translation system that works like the
 ``{% block %}`` template tag, and marks large sections of translatable
