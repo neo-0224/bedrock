@@ -183,7 +183,7 @@
 
 {# Docs: https://bedrock.readthedocs.io/en/latest/firefox-accounts.html#linking-to-accountsfirefoxcom #}
 {% macro fxa_cta_link(entrypoint, button_text, service_type='sync', action='signin', account_id=None, button_class=None, utm_campaign=None, utm_content=None, utm_term=None) %}
-  <a {{ fxa_link_fragment(entrypoint=entrypoint, service_type=service_type, action=action, utm_campaign=utm_campaign, utm_content=utm_content, utm_term=utm_term) }} class="js-fxa-cta-link{% if button_class %} {{ button_class }}{% endif %}" data-cta-text="Create account" data-cta-type="FxA-Sync" data-cta-position="{{ button_location }}" {%if account_id %}id="{{ account_id }}"{% endif %}>
+  <a {{ fxa_link_fragment(entrypoint=entrypoint, service_type=service_type, action=action, utm_campaign=utm_campaign, utm_content=utm_content, utm_term=utm_term) }} class="js-fxa-cta-link{% if button_class %} {{ button_class }}{% endif %}" data-cta-text="Create account" data-cta-type="fxa-sync" data-cta-position="{{ button_location }}" {%if account_id %}id="{{ account_id }}"{% endif %}>
     {{ button_text }}
   </a>
 {%- endmacro %}
@@ -283,9 +283,9 @@
         type="submit"
         class="{{ button_class }}"
         id="fxa-email-form-submit"
-        data-cta-type="FxA-Sync"
-        data-cta-text="Register"
-        data-cta-position="Primary"
+        data-cta-type="fxa-sync"
+        data-cta-text="register"
+        data-cta-position="primary"
       >
       {% if button_text %}
         {{ button_text }}
